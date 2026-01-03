@@ -1,6 +1,5 @@
 package com.app.examproject.domains.entities;
 
-import com.app.examproject.errors.ExamError;
 import jakarta.persistence.*;
 import lombok.Data;
 

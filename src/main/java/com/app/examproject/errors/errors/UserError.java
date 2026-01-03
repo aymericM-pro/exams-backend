@@ -1,5 +1,6 @@
-package com.app.examproject.errors;
+package com.app.examproject.errors.errors;
 
+import com.app.examproject.errors.BusinessError;
 import org.springframework.http.HttpStatus;
 
 public enum UserError implements BusinessError {

@@ -7,7 +7,7 @@ import com.app.examproject.domains.dto.users.UserResponse;
 import com.app.examproject.domains.entities.Role;
 import com.app.examproject.domains.entities.UserEntity;
 import com.app.examproject.errors.BusinessException;
-import com.app.examproject.errors.UserError;
+import com.app.examproject.errors.errors.UserError;
 import com.app.examproject.repositories.UserRepository;
 import com.app.examproject.services.UserService;
 import lombok.RequiredArgsConstructor;

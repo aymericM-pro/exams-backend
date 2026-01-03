@@ -41,6 +41,10 @@ public class UserEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<ExamEntity> exams = new HashSet<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "class_id")
+    private ClassEntity studentClass;
+
     public UserEntity() {}
 
     public UserEntity(String email, String password, Set<Role> roles, String firstname, String lastname) {
