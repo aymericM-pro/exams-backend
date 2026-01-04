@@ -11,3 +11,7 @@ spring:
 
   flyway:
     enabled: false
+
+openai:
+  api:
+    key: test-key

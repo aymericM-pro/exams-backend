@@ -27,7 +27,7 @@
         <mapstruct.version>1.6.0</mapstruct.version>
         <springdoc.version>2.8.3</springdoc.version>
         <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
-
+        <okhttp3.version>4.12.0</okhttp3.version>
         <!-- Annotation processors -->
         <mapstruct.processor.version>1.5.5.Final</mapstruct.processor.version>
         <lombok.version>1.18.32</lombok.version>
@@ -48,6 +48,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp3.version}</version>
         </dependency>
 
         <!-- Database -->
@@ -154,46 +160,7 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-           <!-- <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.surefire.plugin.version}</version>
-                <configuration>
-                    &lt;!&ndash; Tests unitaires uniquement &ndash;&gt;
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-
-                    &lt;!&ndash; Java 21 / Mockito &ndash;&gt;
-                    <useModulePath>false</useModulePath>
-                    <argLine>${test.jvm.args}</argLine>
-
-                    &lt;!&ndash; Lisibilité &ndash;&gt;
-                    <trimStackTrace>true</trimStackTrace>
-                    <printSummary>true</printSummary>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven.failsafe.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <configuration>
-                            <includes>
-                                <include>**/*IT.java</include>
-                            </includes>
-                            <useModulePath>false</useModulePath>
-                            <argLine>${test.jvm.args}</argLine>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
--->            <plugin>
+           <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.plugin.version}</version>

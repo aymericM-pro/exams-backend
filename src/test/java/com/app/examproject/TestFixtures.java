@@ -1,5 +1,7 @@
 package com.app.examproject;
 
+import com.app.examproject.domains.dto.classes.ClassResponse;
+import com.app.examproject.domains.dto.classes.CreateClassRequest;
 import com.app.examproject.domains.dto.exams.*;
 import com.app.examproject.domains.dto.users.CreateUserRequest;
 import com.app.examproject.domains.dto.users.UpdateUserRequest;
@@ -124,6 +126,29 @@ public class TestFixtures {
                 "John",
                 "Doe",
                 "ROLE_STUDENT"
+        );
+    }
+
+
+    public static ClassEntity classEntity(UUID id) {
+        ClassEntity entity = new ClassEntity();
+        entity.setClassId(id);
+        entity.setName("L3 Informatique");
+        entity.setGraduationYear("2024-2025");
+        return entity;
+    }
+
+    public static ClassResponse classResponse(
+            UUID classId,
+            List<UUID> studentIds,
+            List<UUID> professorIds
+    ) {
+        return new ClassResponse(
+                classId,
+                "L3 Informatique",
+                "2024-2025",
+                studentIds,
+                professorIds
         );
     }
 }

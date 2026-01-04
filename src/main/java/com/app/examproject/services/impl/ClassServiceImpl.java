@@ -1,12 +1,14 @@
 package com.app.examproject.services.impl;
 
-import com.app.examproject.domains.dto.ClassMapper;
+import com.app.examproject.domains.ClassMapper;
 import com.app.examproject.domains.dto.classes.ClassResponse;
 import com.app.examproject.domains.dto.classes.CreateClassRequest;
 import com.app.examproject.domains.entities.ClassEntity;
+import com.app.examproject.domains.entities.UserEntity;
 import com.app.examproject.errors.BusinessException;
 import com.app.examproject.errors.errors.ClassError;
 import com.app.examproject.repositories.ClassRepository;
+import com.app.examproject.repositories.UserRepository;
 import com.app.examproject.services.ClassService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,22 +22,52 @@ public class ClassServiceImpl implements ClassService {
 
     private final ClassRepository classRepository;
     private final ClassMapper classMapper;
+    private final UserRepository userRepository;
 
     public ClassServiceImpl(
             ClassRepository classRepository,
-            ClassMapper classMapper
+            ClassMapper classMapper,
+            UserRepository userRepository
     ) {
         this.classRepository = classRepository;
         this.classMapper = classMapper;
+        this.userRepository = userRepository;
     }
+
+    // ================= CREATE =================
 
     @Override
     public ClassResponse create(CreateClassRequest request) {
         validateCreate(request);
 
         ClassEntity entity = classMapper.fromCreate(request);
-        ClassEntity saved = classRepository.save(entity);
 
+        // ===== Étudiants =====
+        if (request.studentIds() != null && !request.studentIds().isEmpty()) {
+            List<UserEntity> students = userRepository.findAllById(request.studentIds());
+
+            if (students.size() != request.studentIds().size()) {
+                throw new BusinessException(ClassError.INVALID_REQUEST);
+            }
+
+            for (UserEntity student : students) {
+                student.setStudentClass(entity);
+                entity.getStudents().add(student);
+            }
+        }
+
+        // ===== Professeurs =====
+        if (request.professorIds() != null && !request.professorIds().isEmpty()) {
+            List<UserEntity> professors = userRepository.findAllById(request.professorIds());
+
+            if (professors.size() != request.professorIds().size()) {
+                throw new BusinessException(ClassError.INVALID_REQUEST);
+            }
+
+            entity.getProfessors().addAll(professors);
+        }
+
+        ClassEntity saved = classRepository.save(entity);
         return classMapper.toResponse(saved);
     }
 

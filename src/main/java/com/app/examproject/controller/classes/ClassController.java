@@ -1,4 +1,4 @@
-package com.app.examproject.controller;
+package com.app.examproject.controller.classes;
 
 import com.app.examproject.domains.dto.classes.ClassResponse;
 import com.app.examproject.domains.dto.classes.CreateClassRequest;
@@ -44,4 +44,5 @@ public class ClassController implements IClassControllerSwagger {
         classService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
 }

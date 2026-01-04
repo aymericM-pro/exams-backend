@@ -27,6 +27,23 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
+    public List<UserResponse> createMany(List<CreateUserRequest> requests) {
+        List<UserEntity> users = requests.stream()
+                .map(request -> {
+                    UserEntity user = userMapper.fromCreate(request);
+                    user.setRoles(Set.of(Role.valueOf(request.role())));
+                    return user;
+                })
+                .toList();
+
+        List<UserEntity> savedUsers = userRepository.saveAll(users);
+
+        return savedUsers.stream()
+                .map(userMapper::toResponse)
+                .toList();
+    }
+
+    @Override
     public UserResponse create(CreateUserRequest request) {
         UserEntity user = userMapper.fromCreate(request);
         user.setRoles(Set.of(Role.valueOf(request.role())));
@@ -46,23 +63,15 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserResponse getById(UUID id) {
-        UserEntity user = userRepository.findById(id)
-                .orElseThrow(() ->
-                        new BusinessException(UserError.USER_NOT_FOUND)
-                );
+        UserEntity user = userRepository.findById(id).orElseThrow(() -> new BusinessException(UserError.USER_NOT_FOUND));
         return userMapper.toResponse(user);
     }
 
     @Override
     public UserResponse update(UUID id, UpdateUserRequest request) {
-        UserEntity existing = userRepository.findById(id)
-                .orElseThrow(() ->
-                        new BusinessException(UserError.USER_NOT_FOUND)
-                );
-
+        UserEntity existing = userRepository.findById(id).orElseThrow(() -> new BusinessException(UserError.USER_NOT_FOUND));
         UserEntity updated = userMapper.fromUpdate(request);
         updated.setUserId(existing.getUserId());
-
         UserEntity saved = userRepository.save(updated);
         return userMapper.toResponse(saved);
     }

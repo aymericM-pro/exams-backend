@@ -20,3 +20,7 @@ spring:
 logging:
   level:
     org.flywaydb: DEBUG
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY}

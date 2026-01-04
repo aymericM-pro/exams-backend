@@ -1,4 +1,4 @@
-package com.app.examproject.controller;
+package com.app.examproject.controller.exams;
 
 import com.app.examproject.domains.dto.exams.CreateExamRequest;
 import com.app.examproject.domains.dto.exams.ExamResponse;

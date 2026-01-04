@@ -1,12 +1,12 @@
 package com.app.examproject.domains;
 
-
 import com.app.examproject.domains.dto.users.CreateUserRequest;
 import com.app.examproject.domains.dto.users.UpdateUserRequest;
 import com.app.examproject.domains.dto.users.UserResponse;
 import com.app.examproject.domains.entities.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 

@@ -1,4 +1,4 @@
-package com.app.examproject.controller;
+package com.app.examproject.controller.users;
 
 import com.app.examproject.domains.dto.users.CreateUserRequest;
 import com.app.examproject.domains.dto.users.UpdateUserRequest;
