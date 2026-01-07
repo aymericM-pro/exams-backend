@@ -7,9 +7,11 @@ import com.app.examproject.domains.entities.ClassEntity;
 import com.app.examproject.domains.entities.UserEntity;
 import com.app.examproject.errors.BusinessException;
 import com.app.examproject.errors.errors.ClassError;
+import com.app.examproject.errors.errors.UserError;
 import com.app.examproject.repositories.ClassRepository;
 import com.app.examproject.repositories.UserRepository;
 import com.app.examproject.services.ClassService;
+import org.springframework.data.repository.query.ListQueryByExampleExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,29 +36,26 @@ public class ClassServiceImpl implements ClassService {
         this.userRepository = userRepository;
     }
 
-    // ================= CREATE =================
-
     @Override
     public ClassResponse create(CreateClassRequest request) {
         validateCreate(request);
 
         ClassEntity entity = classMapper.fromCreate(request);
 
-        // ===== Étudiants =====
+        ClassEntity persistedClass = classRepository.save(entity);
+
         if (request.studentIds() != null && !request.studentIds().isEmpty()) {
             List<UserEntity> students = userRepository.findAllById(request.studentIds());
 
             if (students.size() != request.studentIds().size()) {
-                throw new BusinessException(ClassError.INVALID_REQUEST);
+                throw new BusinessException(UserError.USER_NOT_FOUND);
             }
 
             for (UserEntity student : students) {
-                student.setStudentClass(entity);
-                entity.getStudents().add(student);
+                persistedClass.addStudent(student);
             }
         }
 
-        // ===== Professeurs =====
         if (request.professorIds() != null && !request.professorIds().isEmpty()) {
             List<UserEntity> professors = userRepository.findAllById(request.professorIds());
 
@@ -64,10 +63,12 @@ public class ClassServiceImpl implements ClassService {
                 throw new BusinessException(ClassError.INVALID_REQUEST);
             }
 
-            entity.getProfessors().addAll(professors);
+            for (UserEntity professor : professors) {
+                persistedClass.addProfessor(professor);
+            }
         }
 
-        ClassEntity saved = classRepository.save(entity);
+        ClassEntity saved = classRepository.save(persistedClass);
         return classMapper.toResponse(saved);
     }
 
@@ -91,10 +92,19 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public void delete(UUID id) {
-        if (!classRepository.existsById(id)) {
-            throw new BusinessException(ClassError.CLASS_NOT_FOUND);
+        ClassEntity entity = classRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ClassError.CLASS_NOT_FOUND));
+
+        // Détacher les étudiants
+        for (UserEntity student : entity.getStudents()) {
+            student.setStudentClass(null);
         }
-        classRepository.deleteById(id);
+        entity.getStudents().clear();
+
+        // Détacher les professeurs
+        entity.getProfessors().clear();
+
+        classRepository.delete(entity);
     }
 
     private void validateCreate(CreateClassRequest request) {

@@ -22,9 +22,7 @@ public class ExamSessionController implements IExamSessionControllerSwagger {
 
     @PostMapping
     @Override
-    public ResponseEntity<ExamSessionResponse> create(
-            @RequestBody CreateExamSessionRequest request
-    ) {
+    public ResponseEntity<ExamSessionResponse> create(@RequestBody CreateExamSessionRequest request) {
         ExamSessionResponse created = examSessionService.create(request);
         return ResponseEntity.status(201).body(created);
     }

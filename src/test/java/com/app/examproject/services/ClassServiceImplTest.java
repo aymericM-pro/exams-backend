@@ -51,8 +51,6 @@ class ClassServiceImplTest {
         professorId = UUID.randomUUID();
     }
 
-    // ================= CREATE =================
-
     @Test
     void testCreateClass() {
         CreateClassRequest request = new CreateClassRequest(
@@ -62,7 +60,9 @@ class ClassServiceImplTest {
                 List.of(professorId)
         );
 
-        ClassEntity entity = TestFixtures.classEntity(classId);
+        ClassEntity entity = TestFixtures.classEntity(null);
+        ClassEntity persisted = TestFixtures.classEntity(classId);
+
         UserEntity student = TestFixtures.userEntity(studentId);
         UserEntity professor = TestFixtures.userEntity(professorId);
 
@@ -73,22 +73,31 @@ class ClassServiceImplTest {
         );
 
         when(classMapper.fromCreate(request)).thenReturn(entity);
+
+        when(classRepository.save(entity)).thenReturn(persisted);
+        when(classRepository.save(persisted)).thenReturn(persisted);
+
         when(userRepository.findAllById(List.of(studentId))).thenReturn(List.of(student));
         when(userRepository.findAllById(List.of(professorId))).thenReturn(List.of(professor));
-        when(classRepository.save(entity)).thenReturn(entity);
-        when(classMapper.toResponse(entity)).thenReturn(expectedResponse);
 
+        when(classMapper.toResponse(persisted)).thenReturn(expectedResponse);
+
+        // WHEN
         ClassResponse result = classService.create(request);
 
+        // THEN
         assertThat(result).isNotNull();
         assertThat(result.classId()).isEqualTo(classId);
         assertThat(result.studentIds()).containsExactly(studentId);
         assertThat(result.professorIds()).containsExactly(professorId);
 
-        assertThat(student.getStudentClass()).isEqualTo(entity);
+        assertThat(student.getStudentClass()).isEqualTo(persisted);
 
-        verify(classRepository).save(entity);
+        verify(classRepository, times(2)).save(any(ClassEntity.class));
+        verify(userRepository).findAllById(List.of(studentId));
+        verify(userRepository).findAllById(List.of(professorId));
     }
+
 
 
     @Test
@@ -111,8 +120,6 @@ class ClassServiceImplTest {
         verifyNoInteractions(classMapper);
         verifyNoInteractions(userRepository);
     }
-
-    // ================= READ =================
 
     @Test
     void testGetAllClasses() {
@@ -163,20 +170,43 @@ class ClassServiceImplTest {
         verifyNoInteractions(classMapper);
     }
 
-    // ================= DELETE =================
-
     @Test
     void testDeleteClass() {
-        when(classRepository.existsById(classId)).thenReturn(true);
+        // GIVEN
+        ClassEntity classEntity = TestFixtures.classEntity(classId);
 
+        UserEntity student1 = TestFixtures.userEntity(studentId);
+        UserEntity student2 = TestFixtures.userEntity(UUID.randomUUID());
+        UserEntity professor = TestFixtures.userEntity(professorId);
+
+        // relations initiales
+        classEntity.getStudents().addAll(List.of(student1, student2));
+        classEntity.getProfessors().add(professor);
+
+        student1.setStudentClass(classEntity);
+        student2.setStudentClass(classEntity);
+
+        when(classRepository.findById(classId)).thenReturn(Optional.of(classEntity));
+
+        // WHEN
         classService.delete(classId);
 
-        verify(classRepository).deleteById(classId);
+        // THEN
+        assertThat(student1.getStudentClass()).isNull();
+        assertThat(student2.getStudentClass()).isNull();
+
+        assertThat(classEntity.getStudents()).isEmpty();
+        assertThat(classEntity.getProfessors()).isEmpty();
+
+        verify(classRepository).findById(classId);
+        verify(classRepository).delete(classEntity);
+
+        verifyNoInteractions(userRepository);
     }
 
     @Test
     void testDeleteClassThrowsExceptionWhenNotFound() {
-        when(classRepository.existsById(classId)).thenReturn(false);
+        when(classRepository.findById(classId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> classService.delete(classId))
                 .isInstanceOf(BusinessException.class)
@@ -185,7 +215,9 @@ class ClassServiceImplTest {
                                 .isEqualTo(ClassError.CLASS_NOT_FOUND)
                 );
 
-        verify(classRepository).existsById(classId);
-        verifyNoMoreInteractions(classRepository);
+        verify(classRepository).findById(classId);
+        verify(classRepository, never()).delete(any());
+        verifyNoInteractions(userRepository);
     }
+
 }

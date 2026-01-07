@@ -30,17 +30,34 @@ public class ClassEntity {
     private String graduationYear;
 
     @OneToMany(
-            mappedBy = "studentClass",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            mappedBy = "studentClass"
     )
     private List<UserEntity> students = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "class_professors", // snake_case OK
+            name = "class_professors",
             joinColumns = @JoinColumn(name = "class_id"),
             inverseJoinColumns = @JoinColumn(name = "professor_id")
     )
     private List<UserEntity> professors = new ArrayList<>();
+
+    public void addStudent(UserEntity student) {
+        students.add(student);
+        student.setStudentClass(this);
+    }
+
+    public void removeStudent(UserEntity student) {
+        students.remove(student);
+        student.setStudentClass(null);
+    }
+
+    public void addProfessor(UserEntity professor) {
+        professors.add(professor);
+    }
+
+    public void removeProfessor(UserEntity professor) {
+        professors.remove(professor);
+    }
+
 }

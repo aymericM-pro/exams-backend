@@ -39,6 +39,11 @@ public class UserEntity {
     private Set<Role> roles;
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "users_exams",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "exam_id")
+    )
     private Set<ExamEntity> exams = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
