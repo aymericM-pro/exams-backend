@@ -1,10 +1,17 @@
-package com.app.examproject.domains.entities;
+package com.app.examproject.domains.entities.anwsers;
 
+import com.app.examproject.domains.entities.QuestionEntity;
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.util.UUID;
 
 @Entity
 @Table(name = "answers")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class AnswerEntity {
 
     @Id
@@ -22,19 +29,10 @@ public class AnswerEntity {
     @JoinColumn(name = "question_id", nullable = false)
     private QuestionEntity question;
 
-    public AnswerEntity() {}
-
-    public AnswerEntity(String text, boolean correct) {
+    public AnswerEntity(String text, boolean correct, QuestionEntity question) {
         this.text = text;
         this.correct = correct;
+        this.question = question;
     }
 
-    public UUID getId() { return answerId; }
-    public String getText() { return text; }
-    public void setText(String text) { this.text = text; }
-    public boolean isCorrect() { return correct; }
-    public void setCorrect(boolean correct) { this.correct = correct; }
-
-    public QuestionEntity getQuestion() { return question; }
-    public void setQuestion(QuestionEntity question) { this.question = question; }
 }

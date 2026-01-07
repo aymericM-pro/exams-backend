@@ -1,14 +1,17 @@
 package com.app.examproject.domains.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.*;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "exams")
-@Data
 public class ExamEntity {
 
     @Id
@@ -39,8 +42,6 @@ public class ExamEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
-
-    public ExamEntity() {}
 
     public void addQuestion(QuestionEntity q) {
         questions.add(q);

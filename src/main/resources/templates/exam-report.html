@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+
+    <style>
+        @page {
+            size: A4;
+            margin: 25mm 20mm 25mm 20mm;
+
+            @bottom-center {
+                content: "Page " counter(page) " / " counter(pages);
+                font-size: 10px;
+                color: #666;
+            }
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            color: #222;
+            line-height: 1.4;
+        }
+
+        .header {
+            border-bottom: 2px solid #1f4fd8;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1f4fd8;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            color: #555;
+        }
+
+        .meta-grid {
+            width: 100%;
+            margin-bottom: 25px;
+        }
+
+        .meta-grid td {
+            padding: 6px 8px;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .meta-label {
+            font-weight: bold;
+            width: 140px;
+            color: #333;
+            text-align: left;
+        }
+
+        h2 {
+            margin-top: 25px;
+            font-size: 14px;
+            border-left: 4px solid #1f4fd8;
+            padding-left: 8px;
+            color: #1f4fd8;
+        }
+
+        .kpi-table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+        }
+
+        .kpi-table td {
+            text-align: center;
+            padding: 12px 6px;
+        }
+
+        .kpi-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1f4fd8;
+        }
+
+        .kpi-label {
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .section-text {
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        .section-text p {
+            margin: 6px 0;
+            text-align: justify;
+        }
+
+        .highlight-box {
+            border: 1px solid #dbe3ff;
+            background-color: #f7f9ff;
+            padding: 10px 12px;
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f6fb;
+            font-weight: bold;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .rank-1 {
+            background-color: #e8f0ff;
+            font-weight: bold;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .footer-note {
+            margin-top: 30px;
+            font-size: 10px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="header-title">Rapport d’examen</div>
+    <div class="header-subtitle"
+         th:text="${report.examName + ' — ' + report.className}">
+    </div>
+</div>
+
+<!-- META INFORMATIONS -->
+<table class="meta-grid">
+    <tr>
+        <td class="meta-label">Examen</td>
+        <td th:text="${report.examName}"></td>
+        <td class="meta-label">Classe</td>
+        <td th:text="${report.className}"></td>
+    </tr>
+    <tr>
+        <td class="meta-label">Semestre</td>
+        <td th:text="${report.semester}"></td>
+        <td class="meta-label">Date</td>
+        <td th:text="${report.examDate}"></td>
+    </tr>
+    <tr>
+        <td class="meta-label">Professeur</td>
+        <td colspan="3" th:text="${report.teacherName}"></td>
+    </tr>
+</table>
+
+<h2>Statistiques globales</h2>
+
+<table class="kpi-table">
+    <tr>
+        <td>
+            <div class="kpi-value" th:text="${report.globalStats.average}"></div>
+            <div class="kpi-label">Moyenne</div>
+        </td>
+        <td>
+            <div class="kpi-value" th:text="${report.globalStats.median}"></div>
+            <div class="kpi-label">Médiane</div>
+        </td>
+        <td>
+            <div class="kpi-value" th:text="${report.globalStats.min}"></div>
+            <div class="kpi-label">Minimum</div>
+        </td>
+        <td>
+            <div class="kpi-value" th:text="${report.globalStats.max}"></div>
+            <div class="kpi-label">Maximum</div>
+        </td>
+        <td>
+            <div class="kpi-value"
+                 th:text="${report.globalStats.successRate + ' %'}"></div>
+            <div class="kpi-label">Réussite</div>
+        </td>
+    </tr>
+</table>
+
+<!-- PRESENTATION -->
+<h2>Présentation de l’examen</h2>
+<div class="section-text">
+    <p th:text="${report.presentation}"></p>
+</div>
+
+<!-- ORGANISATION -->
+<h2>Organisation et modalités</h2>
+<div class="section-text">
+    <p th:text="${report.organisation}"></p>
+</div>
+
+<!-- QUICK READING -->
+<h2>Lecture rapide des résultats</h2>
+<div class="highlight-box">
+    <p>
+        Moyenne générale :
+        <strong th:text="${report.globalStats.average + ' / 20'}"></strong>
+    </p>
+    <p>
+        Taux de réussite :
+        <strong th:text="${report.globalStats.successRate + ' %'}"></strong>
+    </p>
+</div>
+
+<!-- PEDAGOGICAL SUMMARY -->
+<h2>Synthèse pédagogique</h2>
+<div class="section-text">
+    <p th:text="${report.pedagogicalSummary}"></p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- QUESTION DETAILS -->
+<h2>Détail par question</h2>
+
+<table>
+    <tr>
+        <th>Question</th>
+        <th>Type</th>
+        <th class="center">% Réussite</th>
+        <th class="center">Score moyen</th>
+    </tr>
+    <tr th:each="q : ${report.questions}">
+        <td th:text="${q.question}"></td>
+        <td th:text="${q.type}"></td>
+        <td class="center" th:text="${q.successRate}"></td>
+        <td class="center" th:text="${q.averageScore}"></td>
+    </tr>
+</table>
+
+<!-- RANKING -->
+<h2>Classement</h2>
+
+<table>
+    <tr>
+        <th class="center">Rang</th>
+        <th>Étudiant</th>
+        <th class="center">Note</th>
+    </tr>
+    <tr th:each="r : ${report.ranking}"
+        th:classappend="${r.rank == 1} ? 'rank-1'">
+        <td class="center" th:text="${r.rank}"></td>
+        <td th:text="${r.studentName}"></td>
+        <td class="center" th:text="${r.score}"></td>
+    </tr>
+</table>
+
+<div class="footer-note">
+    Rapport généré automatiquement — ExamProject
+</div>
+
+</body>
+</html>

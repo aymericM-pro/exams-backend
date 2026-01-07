@@ -13,10 +13,13 @@ import org.mapstruct.Mapping;
 )
 public interface QuestionMapper {
 
-    @Mapping(target = "type", expression = "java(entity.getType().name().toLowerCase())")
+    @Mapping(
+            target = "type",
+            expression = "java(entity.getType().name().toLowerCase())"
+    )
     QuestionResponse toResponse(QuestionEntity entity);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "questionId", ignore = true)
     @Mapping(target = "exam", ignore = true)
     @Mapping(
             target = "type",
@@ -24,7 +27,7 @@ public interface QuestionMapper {
     )
     QuestionEntity fromCreate(CreateQuestionRequest request);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "questionId", ignore = true)
     @Mapping(target = "exam", ignore = true)
     @Mapping(
             target = "type",

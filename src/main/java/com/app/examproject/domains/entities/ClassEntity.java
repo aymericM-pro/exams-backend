@@ -4,15 +4,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "classes")
-@Data
 public class ClassEntity {
 
     @Id
@@ -40,8 +43,4 @@ public class ClassEntity {
             inverseJoinColumns = @JoinColumn(name = "professor_id")
     )
     private List<UserEntity> professors = new ArrayList<>();
-
-    public ClassEntity() {
-
-    }
 }

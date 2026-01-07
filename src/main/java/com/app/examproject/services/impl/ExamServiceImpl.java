@@ -6,7 +6,7 @@ import com.app.examproject.domains.dto.exams.ExamResponse;
 import com.app.examproject.domains.dto.exams.UpdateExamRequest;
 import com.app.examproject.domains.entities.ExamEntity;
 import com.app.examproject.domains.entities.QuestionEntity;
-import com.app.examproject.domains.entities.AnswerEntity;
+import com.app.examproject.domains.entities.anwsers.AnswerEntity;
 import com.app.examproject.domains.entities.UserEntity;
 import com.app.examproject.errors.BusinessException;
 import com.app.examproject.errors.errors.ExamError;

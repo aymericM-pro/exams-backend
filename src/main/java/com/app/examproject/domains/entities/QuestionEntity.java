@@ -1,10 +1,20 @@
 package com.app.examproject.domains.entities;
 
+import com.app.examproject.domains.entities.anwsers.AnswerEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.*;
 
 @Entity
 @Table(name = "questions")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class QuestionEntity {
 
     @Id
@@ -31,25 +41,10 @@ public class QuestionEntity {
     )
     private List<AnswerEntity> answers = new ArrayList<>();
 
-    public QuestionEntity() {}
-
     public QuestionEntity(String title, QuestionType type) {
         this.title = title;
         this.type = type;
     }
-
-    // getters/setters
-    public UUID getId() { return questionId; }
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-    public QuestionType getType() { return type; }
-    public void setType(QuestionType type) { this.type = type; }
-
-    public ExamEntity getExam() { return exam; }
-    public void setExam(ExamEntity exam) { this.exam = exam; }
-
-    public List<AnswerEntity> getAnswers() { return answers; }
-
     public void setAnswers(List<AnswerEntity> answers) {
         this.answers.clear();
         if (answers != null) {

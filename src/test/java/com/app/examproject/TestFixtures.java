@@ -1,12 +1,12 @@
 package com.app.examproject;
 
 import com.app.examproject.domains.dto.classes.ClassResponse;
-import com.app.examproject.domains.dto.classes.CreateClassRequest;
 import com.app.examproject.domains.dto.exams.*;
 import com.app.examproject.domains.dto.users.CreateUserRequest;
 import com.app.examproject.domains.dto.users.UpdateUserRequest;
 import com.app.examproject.domains.dto.users.UserResponse;
 import com.app.examproject.domains.entities.*;
+import com.app.examproject.domains.entities.anwsers.AnswerEntity;
 
 import java.time.Instant;
 import java.util.List;
@@ -73,10 +73,11 @@ public class TestFixtures {
         exam.setCreatedAt(Instant.now());
 
         QuestionEntity q = new QuestionEntity("Q1", QuestionType.SINGLE);
-        q.addAnswer(new AnswerEntity("Answer A", true));
-        q.addAnswer(new AnswerEntity("Answer B", false));
+        AnswerEntity a1 = new AnswerEntity("Answer A", true, q);
+        AnswerEntity a2 = new AnswerEntity("Answer B", false, q);
 
-        exam.addQuestion(q);
+        q.addAnswer(a1);
+        q.addAnswer(a2);
         return exam;
     }
 
