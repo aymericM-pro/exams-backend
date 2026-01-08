@@ -1,8 +1,10 @@
 package com.app.examproject.services.impl;
 
 import com.app.examproject.domains.ClassMapper;
+import com.app.examproject.domains.UserMapper;
 import com.app.examproject.domains.dto.classes.ClassResponse;
 import com.app.examproject.domains.dto.classes.CreateClassRequest;
+import com.app.examproject.domains.dto.users.StudentResponse;
 import com.app.examproject.domains.entities.ClassEntity;
 import com.app.examproject.domains.entities.UserEntity;
 import com.app.examproject.errors.BusinessException;
@@ -11,7 +13,6 @@ import com.app.examproject.errors.errors.UserError;
 import com.app.examproject.repositories.ClassRepository;
 import com.app.examproject.repositories.UserRepository;
 import com.app.examproject.services.ClassService;
-import org.springframework.data.repository.query.ListQueryByExampleExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,16 +26,32 @@ public class ClassServiceImpl implements ClassService {
     private final ClassRepository classRepository;
     private final ClassMapper classMapper;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     public ClassServiceImpl(
             ClassRepository classRepository,
             ClassMapper classMapper,
-            UserRepository userRepository
+            UserRepository userRepository,
+            UserMapper userMapper
     ) {
         this.classRepository = classRepository;
         this.classMapper = classMapper;
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
+
+    @Override
+    public List<StudentResponse> getStudentsByClass(UUID classId) {
+
+        ClassEntity classEntity = classRepository.findWithStudentsByClassId(classId)
+                .orElseThrow(() -> new BusinessException(ClassError.CLASS_NOT_FOUND));
+
+        return classEntity.getStudents()
+                .stream()
+                .map(userMapper::toStudentResponse)
+                .toList();
+    }
+
 
     @Override
     public ClassResponse create(CreateClassRequest request) {

@@ -2,6 +2,7 @@ package com.app.examproject.controller.classes;
 
 import com.app.examproject.domains.dto.classes.ClassResponse;
 import com.app.examproject.domains.dto.classes.CreateClassRequest;
+import com.app.examproject.domains.dto.users.StudentResponse;
 import com.app.examproject.services.ClassService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +44,12 @@ public class ClassController implements IClassControllerSwagger {
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         classService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{classId}/students")
+    @Override
+    public ResponseEntity<List<StudentResponse>> getStudentsByClass(@PathVariable UUID classId) {
+        return ResponseEntity.ok(classService.getStudentsByClass(classId));
     }
 
 }

@@ -2,6 +2,7 @@ package com.app.examproject.controller.classes;
 
 import com.app.examproject.domains.dto.classes.ClassResponse;
 import com.app.examproject.domains.dto.classes.CreateClassRequest;
+import com.app.examproject.domains.dto.users.StudentResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -46,5 +47,11 @@ public interface IClassControllerSwagger {
     ResponseEntity<Void> delete(
             @Parameter(description = "Class ID", required = true)
             @PathVariable UUID id
+    );
+
+    @Operation(summary = "Get students by class ID")
+    ResponseEntity<List<StudentResponse>> getStudentsByClass(
+            @Parameter(description = "Class ID", required = true)
+            @PathVariable UUID classId
     );
 }
