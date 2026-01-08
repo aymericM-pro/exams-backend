@@ -2,8 +2,10 @@ package com.app.examproject.services;
 
 import com.app.examproject.TestFixtures;
 import com.app.examproject.domains.ClassMapper;
+import com.app.examproject.domains.UserMapper;
 import com.app.examproject.domains.dto.classes.ClassResponse;
 import com.app.examproject.domains.dto.classes.CreateClassRequest;
+import com.app.examproject.domains.dto.users.StudentResponse;
 import com.app.examproject.domains.entities.ClassEntity;
 import com.app.examproject.domains.entities.UserEntity;
 import com.app.examproject.errors.BusinessException;
@@ -36,6 +38,9 @@ class ClassServiceImplTest {
 
     @Mock
     UserRepository userRepository;
+
+    @Mock
+    UserMapper userMapper;
 
     @InjectMocks
     ClassServiceImpl classService;
@@ -82,10 +87,8 @@ class ClassServiceImplTest {
 
         when(classMapper.toResponse(persisted)).thenReturn(expectedResponse);
 
-        // WHEN
         ClassResponse result = classService.create(request);
 
-        // THEN
         assertThat(result).isNotNull();
         assertThat(result.classId()).isEqualTo(classId);
         assertThat(result.studentIds()).containsExactly(studentId);
@@ -97,6 +100,67 @@ class ClassServiceImplTest {
         verify(userRepository).findAllById(List.of(studentId));
         verify(userRepository).findAllById(List.of(professorId));
     }
+
+    @Test
+    void testGetStudentsByClassThrowsExceptionWhenClassNotFound() {
+        when(classRepository.findWithStudentsByClassId(classId))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> classService.getStudentsByClass(classId))
+                .isInstanceOf(BusinessException.class)
+                .satisfies(ex ->
+                        assertThat(((BusinessException) ex).getError())
+                                .isEqualTo(ClassError.CLASS_NOT_FOUND)
+                );
+
+        verify(classRepository).findWithStudentsByClassId(classId);
+        verifyNoInteractions(userMapper);
+        verifyNoInteractions(userRepository);
+    }
+
+
+    @Test
+    void testGetStudentsByClass() {
+        ClassEntity classEntity = TestFixtures.classEntity(classId);
+
+        UserEntity student1 = TestFixtures.userEntity(studentId);
+        UserEntity student2 = TestFixtures.userEntity(UUID.randomUUID());
+
+        classEntity.getStudents().addAll(List.of(student1, student2));
+
+        StudentResponse response1 = new StudentResponse(
+                student1.getUserId(),
+                student1.getFirstname(),
+                student1.getLastname(),
+                student1.getEmail()
+        );
+
+        StudentResponse response2 = new StudentResponse(
+                student2.getUserId(),
+                student2.getFirstname(),
+                student2.getLastname(),
+                student2.getEmail()
+        );
+
+        when(classRepository.findWithStudentsByClassId(classId))
+                .thenReturn(Optional.of(classEntity));
+
+        when(userMapper.toStudentResponse(student1)).thenReturn(response1);
+        when(userMapper.toStudentResponse(student2)).thenReturn(response2);
+
+        List<StudentResponse> result = classService.getStudentsByClass(classId);
+
+        assertThat(result)
+                .hasSize(2)
+                .containsExactly(response1, response2);
+
+        verify(classRepository).findWithStudentsByClassId(classId);
+        verify(userMapper).toStudentResponse(student1);
+        verify(userMapper).toStudentResponse(student2);
+
+        verifyNoInteractions(userRepository);
+    }
+
 
 
 
@@ -172,14 +236,12 @@ class ClassServiceImplTest {
 
     @Test
     void testDeleteClass() {
-        // GIVEN
         ClassEntity classEntity = TestFixtures.classEntity(classId);
 
         UserEntity student1 = TestFixtures.userEntity(studentId);
         UserEntity student2 = TestFixtures.userEntity(UUID.randomUUID());
         UserEntity professor = TestFixtures.userEntity(professorId);
 
-        // relations initiales
         classEntity.getStudents().addAll(List.of(student1, student2));
         classEntity.getProfessors().add(professor);
 
@@ -188,10 +250,8 @@ class ClassServiceImplTest {
 
         when(classRepository.findById(classId)).thenReturn(Optional.of(classEntity));
 
-        // WHEN
         classService.delete(classId);
 
-        // THEN
         assertThat(student1.getStudentClass()).isNull();
         assertThat(student2.getStudentClass()).isNull();
 

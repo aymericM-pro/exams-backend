@@ -11,10 +11,6 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface ExamSessionMapper {
 
-    /* =========================
-       CREATE
-    ========================== */
-
     @Mapping(target = "examSessionId", ignore = true)
     @Mapping(target = "exam", source = "exam")
     @Mapping(target = "studentClass", source = "studentClass")
@@ -26,10 +22,6 @@ public interface ExamSessionMapper {
             ClassEntity studentClass
     );
 
-    /* =========================
-       UPDATE (PARTIAL)
-    ========================== */
-
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "examSessionId", ignore = true)
     @Mapping(target = "exam", ignore = true)
@@ -40,10 +32,6 @@ public interface ExamSessionMapper {
             @MappingTarget ExamSessionEntity entity,
             UpdateExamSessionRequest request
     );
-
-    /* =========================
-       READ
-    ========================== */
 
     @Mapping(target = "examSessionId", source = "examSessionId")
     @Mapping(target = "examId", source = "exam.examId")

@@ -3,7 +3,6 @@ package com.app.examproject.services;
 import com.app.examproject.domains.dto.classes.ClassResponse;
 import com.app.examproject.domains.dto.classes.CreateClassRequest;
 import com.app.examproject.domains.dto.users.StudentResponse;
-import com.app.examproject.domains.entities.UserEntity;
 
 import java.util.List;
 import java.util.UUID;
