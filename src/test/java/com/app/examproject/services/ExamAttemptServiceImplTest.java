@@ -44,8 +44,6 @@ class ExamAttemptServiceImplTest {
         sessionId = UUID.randomUUID();
     }
 
-    // ================= GET BY ID =================
-
     @Test
     void testGetByIdOk() {
         ExamAttemptEntity entity = new ExamAttemptEntity();
@@ -82,7 +80,6 @@ class ExamAttemptServiceImplTest {
         verifyNoInteractions(examAttemptMapper);
     }
 
-    // ================= GET BY SESSION =================
 
     @Test
     void testGetBySession() {
@@ -109,7 +106,6 @@ class ExamAttemptServiceImplTest {
         verify(examAttemptMapper).toResponse(a2);
     }
 
-    // ================= UPDATE =================
 
     @Test
     void testUpdateOk() {
@@ -157,8 +153,6 @@ class ExamAttemptServiceImplTest {
         verify(examAttemptRepository).findById(attemptId);
         verifyNoInteractions(examAttemptMapper);
     }
-
-    // ================= DELETE =================
 
     @Test
     void testDeleteOk() {

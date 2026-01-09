@@ -16,11 +16,7 @@ public interface ExamSessionMapper {
     @Mapping(target = "studentClass", source = "studentClass")
     @Mapping(target = "status", constant = "PLANNED")
     @Mapping(target = "examAttempts", ignore = true)
-    ExamSessionEntity toEntity(
-            CreateExamSessionRequest request,
-            ExamEntity exam,
-            ClassEntity studentClass
-    );
+    ExamSessionEntity toEntity(CreateExamSessionRequest request, ExamEntity exam, ClassEntity studentClass);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "examSessionId", ignore = true)
@@ -28,17 +24,13 @@ public interface ExamSessionMapper {
     @Mapping(target = "studentClass", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "examAttempts", ignore = true)
-    void updateEntity(
-            @MappingTarget ExamSessionEntity entity,
-            UpdateExamSessionRequest request
-    );
+    void updateEntity(@MappingTarget ExamSessionEntity entity, UpdateExamSessionRequest request);
 
     @Mapping(target = "examSessionId", source = "examSessionId")
     @Mapping(target = "examId", source = "exam.examId")
     @Mapping(target = "examTitle", source = "exam.title")
     @Mapping(target = "classId", source = "studentClass.classId")
     @Mapping(target = "className", source = "studentClass.name")
-    @Mapping(target = "attemptsCount",
-            expression = "java(entity.getExamAttempts() == null ? 0 : entity.getExamAttempts().size())")
+    @Mapping(target = "attemptsCount", expression = "java(entity.getExamAttempts() == null ? 0 : entity.getExamAttempts().size())")
     ExamSessionResponse toResponse(ExamSessionEntity entity);
 }

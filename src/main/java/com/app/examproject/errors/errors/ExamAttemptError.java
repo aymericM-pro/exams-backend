@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 public enum ExamAttemptError implements BusinessError {
 
     EXAM_ATTEMPT_NOT_FOUND("EXAM_ATTEMPT_404", "Exam attempt not found", HttpStatus.NOT_FOUND),
+    EXAM_ATTEMPT_ALREADY_EXISTS("EXAM_ATTEMPT_409", "Exam attempt already exists for this user and session", HttpStatus.CONFLICT),
+    USER_NOT_ALLOWED_FOR_SESSION("EXAM_ATTEMPT_403", "User not allowed for this exam session", HttpStatus.FORBIDDEN),
     INVALID_REQUEST("EXAM_ATTEMPT_400", "Invalid exam attempt request", HttpStatus.BAD_REQUEST),
     EXAM_ATTEMPT_ALREADY_SUBMITTED("EXAM_ATTEMPT_409", "Exam attempt already submitted", HttpStatus.CONFLICT);
 

@@ -20,5 +20,12 @@ public interface ExamAttemptMapper {
     @Mapping(target = "student", ignore = true)
     @Mapping(target = "answers", ignore = true)
     @Mapping(target = "startedAt", ignore = true)
+    ExamAttemptEntity toEntity(UpdateExamAttemptRequest request);
+
+    @Mapping(target = "examAttemptId", ignore = true)
+    @Mapping(target = "examSession", ignore = true)
+    @Mapping(target = "student", ignore = true)
+    @Mapping(target = "answers", ignore = true)
+    @Mapping(target = "startedAt", ignore = true)
     void update(UpdateExamAttemptRequest request, @MappingTarget ExamAttemptEntity entity);
 }
