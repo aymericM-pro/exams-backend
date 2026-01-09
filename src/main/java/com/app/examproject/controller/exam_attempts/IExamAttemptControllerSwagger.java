@@ -32,6 +32,10 @@ public interface IExamAttemptControllerSwagger {
             CreateExamAttemptRequest request
     );
 
+    @Operation(summary = "Get all exam attempts")
+    @ApiResponse(responseCode = "200", description = "List of exam attempts")
+    ResponseEntity<List<ExamAttemptResponse>> getAll();
+
     @Operation(summary = "Get exam attempt by id")
     @ApiResponse(responseCode = "200", description = "Exam attempt found")
     @ApiResponse(responseCode = "404", description = "Exam attempt not found")

@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ExamAttemptService {
-    ExamAttemptResponse getById(UUID id);
     ExamAttemptResponse create(CreateExamAttemptRequest request);
+    List<ExamAttemptResponse> getAll();
+    ExamAttemptResponse getById(UUID id);
     List<ExamAttemptResponse> getBySession(UUID examSessionId);
     ExamAttemptResponse update(UUID id, UpdateExamAttemptRequest request);
     void delete(UUID id);

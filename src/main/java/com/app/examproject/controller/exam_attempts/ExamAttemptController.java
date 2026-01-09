@@ -20,12 +20,18 @@ public class ExamAttemptController implements IExamAttemptControllerSwagger {
         this.examAttemptService = examAttemptService;
     }
 
-    @GetMapping
     @PostMapping
+    @Override
     public ResponseEntity<ExamAttemptResponse> create(
             @RequestBody CreateExamAttemptRequest request
     ) {
         return ResponseEntity.ok(examAttemptService.create(request));
+    }
+
+    @GetMapping
+    @Override
+    public ResponseEntity<List<ExamAttemptResponse>> getAll() {
+        return ResponseEntity.ok(examAttemptService.getAll());
     }
 
     @GetMapping("/{id}")

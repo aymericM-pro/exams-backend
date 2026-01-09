@@ -41,6 +41,14 @@ public class ExamAttemptServiceImpl implements ExamAttemptService {
     }
 
     @Override
+    public List<ExamAttemptResponse> getAll() {
+        return examAttemptRepository.findAll()
+                .stream()
+                .map(examAttemptMapper::toResponse)
+                .toList();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public ExamAttemptResponse getById(UUID id) {
         ExamAttemptEntity attempt = examAttemptRepository.findById(id)
