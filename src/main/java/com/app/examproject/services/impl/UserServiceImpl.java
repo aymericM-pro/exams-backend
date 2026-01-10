@@ -11,6 +11,8 @@ import com.app.examproject.errors.errors.UserError;
 import com.app.examproject.repositories.UserRepository;
 import com.app.examproject.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,14 +54,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<UserResponse> getAll() {
-        return userRepository.findAll()
-                .stream()
-                .map(userMapper::toResponse)
-                .toList();
+    public Page<UserResponse> getAll(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(userMapper::toResponse);
     }
-
     @Override
     @Transactional(readOnly = true)
     public UserResponse getById(UUID id) {
