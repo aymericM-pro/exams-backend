@@ -55,4 +55,22 @@ public class ExamEntity {
         }
         questions.clear();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        ExamEntity that = (ExamEntity) o;
+        return Objects.equals(examId, that.examId);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(examId);
+    }
 }

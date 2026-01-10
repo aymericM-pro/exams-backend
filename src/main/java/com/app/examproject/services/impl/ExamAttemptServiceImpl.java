@@ -16,6 +16,8 @@ import com.app.examproject.services.ExamAttemptService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,6 +59,7 @@ public class ExamAttemptServiceImpl implements ExamAttemptService {
         return examAttemptMapper.toResponse(attempt);
     }
 
+
     @Override
     public ExamAttemptResponse create(CreateExamAttemptRequest request) {
         if (examAttemptRepository.existsByExamSession_ExamSessionIdAndStudent_UserId(request.examSessionId(), request.studentId())) {
@@ -75,6 +78,7 @@ public class ExamAttemptServiceImpl implements ExamAttemptService {
                         .orElseThrow(() -> new BusinessException(UserError.USER_NOT_FOUND))
         );
 
+        entity.setStartedAt(Instant.now());
         ExamAttemptEntity saved = examAttemptRepository.save(entity);
 
         return examAttemptMapper.toResponse(saved);

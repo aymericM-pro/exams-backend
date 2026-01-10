@@ -43,4 +43,22 @@ public class ExamAttemptEntity {
 
     @Column
     private Instant submittedAt;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof ExamAttemptEntity that)) {
+            return false;
+        }
+
+        return examAttemptId != null && examAttemptId.equals(that.getExamAttemptId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

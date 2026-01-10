@@ -1,5 +1,6 @@
 package com.app.examproject.services.impl;
 
+import com.app.examproject.controller.student_exam.SubmitAnswerRequest;
 import com.app.examproject.domains.ExamAttemptMapper;
 import com.app.examproject.domains.dto.exam_attempt.ExamAttemptResponse;
 import com.app.examproject.domains.entities.ExamAttemptEntity;
@@ -9,10 +10,9 @@ import com.app.examproject.errors.BusinessException;
 import com.app.examproject.errors.errors.ExamAttemptError;
 import com.app.examproject.errors.errors.ExamSessionError;
 import com.app.examproject.errors.errors.UserError;
-import com.app.examproject.repositories.ExamAttemptRepository;
-import com.app.examproject.repositories.ExamSessionRepository;
-import com.app.examproject.repositories.UserRepository;
+import com.app.examproject.repositories.*;
 import com.app.examproject.services.StudentExamService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,24 +21,15 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class StudentExamServiceImpl implements StudentExamService {
 
     private final ExamSessionRepository examSessionRepository;
     private final ExamAttemptRepository examAttemptRepository;
     private final UserRepository userRepository;
     private final ExamAttemptMapper examAttemptMapper;
-
-    public StudentExamServiceImpl(
-            ExamSessionRepository examSessionRepository,
-            ExamAttemptRepository examAttemptRepository,
-            UserRepository userRepository,
-            ExamAttemptMapper examAttemptMapper
-    ) {
-        this.examSessionRepository = examSessionRepository;
-        this.examAttemptRepository = examAttemptRepository;
-        this.userRepository = userRepository;
-        this.examAttemptMapper = examAttemptMapper;
-    }
+    private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
 
     public ExamAttemptResponse start(UUID sessionId, UUID userId) {
 
@@ -48,12 +39,10 @@ public class StudentExamServiceImpl implements StudentExamService {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(UserError.USER_NOT_FOUND));
 
-        // Vérifier que l'étudiant est bien dans la classe de la session
         if (user.getStudentClass() == null || !user.getStudentClass().getClassId().equals(session.getStudentClass().getClassId())) {
             throw new BusinessException(ExamAttemptError.USER_NOT_ALLOWED_FOR_SESSION);
         }
 
-        // Si déjà une tentative -> on la renvoie
         return examAttemptRepository
                 .findByExamSession_ExamSessionIdAndStudent_UserId(sessionId, userId)
                 .map(examAttemptMapper::toResponse)
@@ -68,5 +57,4 @@ public class StudentExamServiceImpl implements StudentExamService {
                     return examAttemptMapper.toResponse(saved);
                 });
     }
-
 }

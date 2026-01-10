@@ -51,5 +51,4 @@ public class ClassController implements IClassControllerSwagger {
     public ResponseEntity<List<StudentResponse>> getStudentsByClass(@PathVariable UUID classId) {
         return ResponseEntity.ok(classService.getStudentsByClass(classId));
     }
-
 }

@@ -27,6 +27,7 @@ public class ExamServiceImpl implements ExamService {
     private final ExamRepository examRepository;
     private final ExamMapper examMapper;
     private final UserRepository userRepository;
+
     public ExamServiceImpl(
             ExamRepository examRepository,
             ExamMapper examMapper,
@@ -53,7 +54,6 @@ public class ExamServiceImpl implements ExamService {
         ExamEntity saved = examRepository.save(exam);
         return examMapper.toResponse(saved);
     }
-    // ================= READ =================
 
     @Override
     @Transactional(readOnly = true)
@@ -72,8 +72,6 @@ public class ExamServiceImpl implements ExamService {
 
         return examMapper.toResponse(exam);
     }
-
-    // ================= UPDATE =================
 
     @Override
     public ExamResponse update(UUID id, UpdateExamRequest request) {

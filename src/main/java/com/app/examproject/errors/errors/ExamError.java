@@ -4,7 +4,6 @@ import com.app.examproject.errors.BusinessError;
 import org.springframework.http.HttpStatus;
 
 public enum ExamError implements BusinessError {
-
     EXAM_NOT_FOUND("EXAM_404", "Exam not found", HttpStatus.NOT_FOUND),
     INVALID_REQUEST("EXAM_400", "Invalid exam request", HttpStatus.BAD_REQUEST);
 
@@ -32,5 +31,4 @@ public enum ExamError implements BusinessError {
     public HttpStatus httpStatus() {
         return httpStatus;
     }
-
 }

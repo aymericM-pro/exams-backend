@@ -3,15 +3,17 @@ package com.app.examproject.errors.errors;
 import com.app.examproject.errors.BusinessError;
 import org.springframework.http.HttpStatus;
 
-public enum ClassError implements BusinessError {
-    CLASS_NOT_FOUND("CLASS_404", "Class not found", HttpStatus.NOT_FOUND),
-    INVALID_REQUEST("CLASS_400", "Invalid class request", HttpStatus.BAD_REQUEST);
+public enum AnswerError implements BusinessError {
+    MULTIPLE_ANSWERS_REQUIRED("ANSWER_400", "Multiple answers required", HttpStatus.BAD_REQUEST),
+    TEXT_ANSWER_REQUIRED("ANSWER_400", "Add text Abswer required", HttpStatus.BAD_REQUEST),
+    SINGLE_ANSWER_REQUIRED("ANSWER_400", "Single answers required", HttpStatus.BAD_REQUEST),
+    ANSWER_NOT_FOUND("ANSWER_404", "Answer not found", HttpStatus.NOT_FOUND),;
 
     private final String code;
     private final String message;
     private final HttpStatus httpStatus;
 
-    ClassError(String code, String message, HttpStatus httpStatus) {
+    AnswerError(String code, String message, HttpStatus httpStatus) {
         this.code = code;
         this.message = message;
         this.httpStatus = httpStatus;
@@ -31,5 +33,4 @@ public enum ClassError implements BusinessError {
     public HttpStatus httpStatus() {
         return httpStatus;
     }
-
 }

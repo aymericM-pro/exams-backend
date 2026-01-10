@@ -56,4 +56,23 @@ public class QuestionEntity {
         a.setQuestion(this);
         this.answers.add(a);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        QuestionEntity that = (QuestionEntity) o;
+        return Objects.equals(questionId, that.questionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(questionId);
+    }
 }

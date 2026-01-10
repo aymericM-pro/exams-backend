@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,23 +38,25 @@ public interface IUserControllerSwagger {
             @ApiResponse(responseCode = "409", description = "Email already exists")
     })
     ResponseEntity<UserResponse> create(
-            @RequestBody(
-                    required = true
-            )
+            @Valid
+            @RequestBody(required = true)
             CreateUserRequest request
+    );
+
+    @Operation(
+            summary = "Create many users",
+            description = "Creates multiple users at once"
+    )
+    ResponseEntity<List<UserResponse>> createMany(
+            @Valid
+            @RequestBody(required = true)
+            List<CreateUserRequest> request
     );
 
     @Operation(
             summary = "Get all users",
             description = "Returns the list of all users"
     )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "List of users",
-                    content = @Content(schema = @Schema(implementation = UserResponse.class))
-            )
-    })
     ResponseEntity<List<UserResponse>> getAll();
 
     @Operation(
@@ -96,9 +99,8 @@ public interface IUserControllerSwagger {
             @Parameter(description = "User UUID", required = true)
             UUID id,
 
-            @RequestBody(
-                    required = true
-            )
+            @Valid
+            @RequestBody(required = true)
             UpdateUserRequest request
     );
 

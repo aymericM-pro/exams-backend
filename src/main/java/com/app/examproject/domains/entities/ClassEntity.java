@@ -60,4 +60,23 @@ public class ClassEntity {
         professors.remove(professor);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        ClassEntity that = (ClassEntity) o;
+
+        return classId != null ? classId.equals(that.classId) : that.classId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return classId != null ? classId.hashCode() : 0;
+    }
 }
