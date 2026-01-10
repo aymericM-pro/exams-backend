@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
@@ -72,7 +73,7 @@ public class ClassEntity {
 
         ClassEntity that = (ClassEntity) o;
 
-        return classId != null ? classId.equals(that.classId) : that.classId == null;
+        return Objects.equals(classId, that.classId);
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.app.examproject.services.impl;
 
 import com.app.examproject.controller.student_exam.SubmitExamAnswersRequest;
 import com.app.examproject.controller.student_exam.SubmitQuestionAnswerRequest;
-import com.app.examproject.domains.AnswerType;
 import com.app.examproject.domains.entities.ExamAttemptEntity;
 import com.app.examproject.domains.entities.QuestionEntity;
 import com.app.examproject.domains.entities.anwsers.*;

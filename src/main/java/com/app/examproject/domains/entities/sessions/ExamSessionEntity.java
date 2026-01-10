@@ -44,4 +44,23 @@ public class ExamSessionEntity {
 
     @OneToMany(mappedBy = "examSession", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<ExamAttemptEntity> examAttempts;
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        ExamSessionEntity that = (ExamSessionEntity) obj;
+        return examSessionId != null && examSessionId.equals(that.examSessionId);
+    }
 }
