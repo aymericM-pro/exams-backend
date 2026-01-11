@@ -4,15 +4,14 @@ import com.app.examproject.domains.dto.users.CreateUserRequest;
 import com.app.examproject.domains.dto.users.UpdateUserRequest;
 import com.app.examproject.domains.dto.users.UserResponse;
 import com.app.examproject.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,56 +23,79 @@ public class UserController implements IUserControllerSwagger {
 
     private final UserService userService;
 
-    @Override
-    @PostMapping
-    public ResponseEntity<UserResponse> create(CreateUserRequest request) {
-        UserResponse response = userService.create(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+    // ================= SEARCH =================
 
     @Override
-    @PostMapping("/many")
-    public ResponseEntity<List<UserResponse>> createMany(List<CreateUserRequest> request) {
-        List<UserResponse> response = userService.createMany(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<UserResponse>> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @RequestParam(defaultValue = "userId,asc") String[] sort
+    @GetMapping("/search")
+    public ResponseEntity<Page<UserResponse>> search(
+            @ParameterObject UserSearchParams params,
+            @ParameterObject Pageable pageable
     ) {
-        Pageable pageable = PageRequest.of(
-                page,
-                size,
-                Sort.by(
-                        Sort.Order.by(sort[0]).with(
-                                sort.length > 1 && sort[1].equalsIgnoreCase("desc")
-                                        ? Sort.Direction.DESC
-                                        : Sort.Direction.ASC
-                        )
-                )
-        );
+        params.formalize();
 
-        return ResponseEntity.ok(userService.getAll(pageable));
+        return ResponseEntity.ok(
+                userService.search(params, pageable)
+        );
     }
+
+    // ================= GET BY ID =================
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getById(UUID id) {
+    public ResponseEntity<UserResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getById(id));
     }
 
+    // ================= GET ALL =================
+
+    @Override
+    @GetMapping
+    public ResponseEntity<Page<UserResponse>> getAll(
+            @ParameterObject Pageable pageable
+    ) {
+        return ResponseEntity.ok(userService.getAll(pageable));
+    }
+
+    // ================= CREATE =================
+
+    @Override
+    @PostMapping
+    public ResponseEntity<UserResponse> create(
+            @RequestBody CreateUserRequest request
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(userService.create(request));
+    }
+
+    // ================= CREATE MANY =================
+
+    @Override
+    @PostMapping("/batch")
+    public ResponseEntity<List<UserResponse>> createMany(
+            @RequestBody List<CreateUserRequest> requests
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(userService.createMany(requests));
+    }
+
+    // ================= UPDATE =================
+
     @Override
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> update(UUID id, UpdateUserRequest request) {
+    public ResponseEntity<UserResponse> update(
+            @PathVariable UUID id,
+            @RequestBody UpdateUserRequest request
+    ) {
         return ResponseEntity.ok(userService.update(id, request));
     }
 
+    // ================= DELETE =================
+
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
     }

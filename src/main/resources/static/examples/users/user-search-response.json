@@ -1,0 +1,21 @@
+{
+  "success": true,
+  "data": [
+    {
+      "email": "charles.student@univ.fr",
+      "firstname": "Charles",
+      "lastname": "Bernard",
+      "role": "ROLE_STUDENT",
+      "userId": "ad97cfdb-767c-43a6-abfa-69dff7798f8a"
+    }
+  ],
+  "meta": {
+    "page": 0,
+    "size": 20,
+    "totalElements": 5,
+    "totalPages": 1,
+    "first": true,
+    "last": true
+  },
+  "timestamp": "2026-01-11T12:45:15.750242Z"
+}

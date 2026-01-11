@@ -1,5 +1,6 @@
 package com.app.examproject.services.impl;
 
+import com.app.examproject.controller.users.UserSearchParams;
 import com.app.examproject.domains.UserMapper;
 import com.app.examproject.domains.dto.users.CreateUserRequest;
 import com.app.examproject.domains.dto.users.UpdateUserRequest;
@@ -27,6 +28,16 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+
+    @Override
+    public Page<UserResponse> search(UserSearchParams params, Pageable pageable) {
+        return userRepository.search(
+                params.getRoleEnum(),
+                params.getFirstname(),
+                pageable
+        ).map(userMapper::toResponse);
+    }
+
 
     @Override
     public List<UserResponse> createMany(List<CreateUserRequest> requests) {
@@ -58,18 +69,23 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable)
                 .map(userMapper::toResponse);
     }
+
     @Override
     @Transactional(readOnly = true)
     public UserResponse getById(UUID id) {
-        UserEntity user = userRepository.findById(id).orElseThrow(() -> new BusinessException(UserError.USER_NOT_FOUND));
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(UserError.USER_NOT_FOUND));
         return userMapper.toResponse(user);
     }
 
     @Override
     public UserResponse update(UUID id, UpdateUserRequest request) {
-        UserEntity existing = userRepository.findById(id).orElseThrow(() -> new BusinessException(UserError.USER_NOT_FOUND));
+        UserEntity existing = userRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(UserError.USER_NOT_FOUND));
+
         UserEntity updated = userMapper.fromUpdate(request);
         updated.setUserId(existing.getUserId());
+
         UserEntity saved = userRepository.save(updated);
         return userMapper.toResponse(saved);
     }

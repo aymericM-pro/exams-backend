@@ -16,10 +16,15 @@ spring:
       hibernate:
         format_sql: true
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
 
 logging:
   level:
     org.flywaydb: DEBUG
+    org.springdoc: DEBUG
+    io.swagger.v3: DEBUG
 
 openai:
   api:
