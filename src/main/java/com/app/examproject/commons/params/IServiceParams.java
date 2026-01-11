@@ -1,6 +1,6 @@
-package com.app.examproject.controller.commons.params;
+package com.app.examproject.commons.params;
 
-import com.app.examproject.errors.BusinessException;
+import com.app.examproject.commons.errors.BusinessException;
 
 /**
  * The base interface implemented by all service parameters classes.

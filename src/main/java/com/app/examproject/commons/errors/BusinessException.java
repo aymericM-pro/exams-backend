@@ -1,4 +1,4 @@
-package com.app.examproject.errors;
+package com.app.examproject.commons.errors;
 
 
 import lombok.Getter;

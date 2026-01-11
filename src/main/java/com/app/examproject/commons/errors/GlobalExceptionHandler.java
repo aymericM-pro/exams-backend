@@ -1,4 +1,4 @@
-package com.app.examproject.errors;
+package com.app.examproject.commons.errors;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;

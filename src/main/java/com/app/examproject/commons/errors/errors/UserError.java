@@ -1,16 +1,16 @@
-package com.app.examproject.errors.errors;
+package com.app.examproject.commons.errors.errors;
 
-import com.app.examproject.errors.BusinessError;
+import com.app.examproject.commons.errors.BusinessError;
 import org.springframework.http.HttpStatus;
 
-public enum QuestionError implements BusinessError  {
-    QUESTION_NOT_FOUND("QUESTION_404", "Question not found", HttpStatus.NOT_FOUND);
+public enum UserError implements BusinessError {
+    USER_NOT_FOUND("USER_404", "User not found", HttpStatus.NOT_FOUND);
 
     private final String code;
     private final String message;
     private final HttpStatus httpStatus;
 
-    QuestionError(String code, String message, HttpStatus httpStatus) {
+    UserError(String code, String message, HttpStatus httpStatus) {
         this.code = code;
         this.message = message;
         this.httpStatus = httpStatus;
@@ -30,4 +30,5 @@ public enum QuestionError implements BusinessError  {
     public HttpStatus httpStatus() {
         return httpStatus;
     }
+
 }

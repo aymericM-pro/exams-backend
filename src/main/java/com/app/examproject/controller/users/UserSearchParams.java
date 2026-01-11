@@ -1,13 +1,12 @@
 package com.app.examproject.controller.users;
 
 import com.app.examproject.domains.entities.Role;
-import com.app.examproject.errors.BusinessException;
-import jakarta.servlet.http.HttpServletRequest;
+import com.app.examproject.commons.errors.BusinessException;
 import lombok.Getter;
 import lombok.Setter;
 
-import com.app.examproject.controller.commons.params.ServiceParams;
-import com.app.examproject.errors.errors.ParamError;
+import com.app.examproject.commons.params.ServiceParams;
+import com.app.examproject.commons.errors.errors.ParamError;
 
 
 @Getter

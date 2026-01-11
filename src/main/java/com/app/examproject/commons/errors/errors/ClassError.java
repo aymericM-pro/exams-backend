@@ -1,16 +1,17 @@
-package com.app.examproject.errors.errors;
+package com.app.examproject.commons.errors.errors;
 
-import com.app.examproject.errors.BusinessError;
+import com.app.examproject.commons.errors.BusinessError;
 import org.springframework.http.HttpStatus;
 
-public enum UserError implements BusinessError {
-    USER_NOT_FOUND("USER_404", "User not found", HttpStatus.NOT_FOUND);
+public enum ClassError implements BusinessError {
+    CLASS_NOT_FOUND("CLASS_404", "Class not found", HttpStatus.NOT_FOUND),
+    INVALID_REQUEST("CLASS_400", "Invalid class request", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;
     private final HttpStatus httpStatus;
 
-    UserError(String code, String message, HttpStatus httpStatus) {
+    ClassError(String code, String message, HttpStatus httpStatus) {
         this.code = code;
         this.message = message;
         this.httpStatus = httpStatus;

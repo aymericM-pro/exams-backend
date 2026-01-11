@@ -1,15 +1,14 @@
 package com.app.examproject.services.impl;
 
-import com.app.examproject.controller.student_exam.SubmitAnswerRequest;
 import com.app.examproject.domains.ExamAttemptMapper;
 import com.app.examproject.domains.dto.exam_attempt.ExamAttemptResponse;
 import com.app.examproject.domains.entities.ExamAttemptEntity;
 import com.app.examproject.domains.entities.UserEntity;
 import com.app.examproject.domains.entities.sessions.ExamSessionEntity;
-import com.app.examproject.errors.BusinessException;
-import com.app.examproject.errors.errors.ExamAttemptError;
-import com.app.examproject.errors.errors.ExamSessionError;
-import com.app.examproject.errors.errors.UserError;
+import com.app.examproject.commons.errors.BusinessException;
+import com.app.examproject.commons.errors.errors.ExamAttemptError;
+import com.app.examproject.commons.errors.errors.ExamSessionError;
+import com.app.examproject.commons.errors.errors.UserError;
 import com.app.examproject.repositories.*;
 import com.app.examproject.services.StudentExamService;
 import lombok.RequiredArgsConstructor;

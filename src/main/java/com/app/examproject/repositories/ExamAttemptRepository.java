@@ -4,8 +4,6 @@ import com.app.examproject.domains.entities.ExamAttemptEntity;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +19,6 @@ public interface ExamAttemptRepository extends JpaRepository<ExamAttemptEntity, 
     @EntityGraph(attributePaths = {
             "examSession",
             "examSession.exam",
-            "examSession.exam.questions",
             "answers"
     })
     Optional<ExamAttemptEntity> findByExamAttemptId(UUID attemptId);

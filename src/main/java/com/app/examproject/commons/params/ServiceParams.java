@@ -1,7 +1,7 @@
-package com.app.examproject.controller.commons.params;
+package com.app.examproject.commons.params;
 
-import com.app.examproject.errors.BusinessException;
-import com.app.examproject.errors.errors.ParamError;
+import com.app.examproject.commons.errors.BusinessException;
+import com.app.examproject.commons.errors.errors.ParamError;
 import org.apache.commons.lang3.StringUtils;
 
 public abstract class ServiceParams<T extends ServiceParams<T>>

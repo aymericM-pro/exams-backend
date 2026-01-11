@@ -5,10 +5,10 @@ import com.app.examproject.domains.dto.exam_attempt.CreateExamAttemptRequest;
 import com.app.examproject.domains.dto.exam_attempt.ExamAttemptResponse;
 import com.app.examproject.domains.dto.exam_attempt.UpdateExamAttemptRequest;
 import com.app.examproject.domains.entities.ExamAttemptEntity;
-import com.app.examproject.errors.BusinessException;
-import com.app.examproject.errors.errors.ExamAttemptError;
-import com.app.examproject.errors.errors.ExamSessionError;
-import com.app.examproject.errors.errors.UserError;
+import com.app.examproject.commons.errors.BusinessException;
+import com.app.examproject.commons.errors.errors.ExamAttemptError;
+import com.app.examproject.commons.errors.errors.ExamSessionError;
+import com.app.examproject.commons.errors.errors.UserError;
 import com.app.examproject.repositories.ExamAttemptRepository;
 import com.app.examproject.repositories.ExamSessionRepository;
 import com.app.examproject.repositories.UserRepository;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package com.app.examproject.controller.commons.responses;
+package com.app.examproject.commons.responses;
 
 public record PageMeta(
         int page,

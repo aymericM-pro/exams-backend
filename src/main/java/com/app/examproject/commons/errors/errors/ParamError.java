@@ -1,6 +1,6 @@
-package com.app.examproject.errors.errors;
+package com.app.examproject.commons.errors.errors;
 
-import com.app.examproject.errors.BusinessError;
+import com.app.examproject.commons.errors.BusinessError;
 import org.springframework.http.HttpStatus;
 
 public enum ParamError implements BusinessError {

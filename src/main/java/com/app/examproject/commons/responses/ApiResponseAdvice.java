@@ -1,4 +1,4 @@
-package com.app.examproject.controller.commons.responses;
+package com.app.examproject.commons.responses;
 
 
 import org.springframework.core.MethodParameter;
