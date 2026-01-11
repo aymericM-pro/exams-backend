@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+
+            @bottom-center {
+                content: "Page " counter(page) " / " counter(pages);
+                font-size: 9px;
+                color: #666;
+            }
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            color: #222;
+        }
+
+        h1 {
+            color: #1f4fd8;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        h2 {
+            margin-top: 25px;
+            font-size: 14px;
+            border-left: 4px solid #1f4fd8;
+            padding-left: 8px;
+            color: #1f4fd8;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        .meta {
+            margin-bottom: 20px;
+            font-size: 11px;
+        }
+
+        .meta span {
+            display: inline-block;
+            min-width: 180px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 6px;
+        }
+
+        th {
+            background-color: #f4f6fb;
+            font-weight: bold;
+        }
+
+        .center {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<h1 th:text="'Classe : ' + ${className}">Classe</h1>
+<div class="subtitle"
+     th:text="'Promotion : ' + ${promotion}">
+</div>
+
+<!-- META INFORMATIONS -->
+<div class="meta">
+    <div>
+        <span><strong>Année académique :</strong></span>
+        <span th:text="${academicYear}">2025 – 2026</span>
+    </div>
+    <div>
+        <span><strong>Année de diplomation :</strong></span>
+        <span th:text="${graduationYear}">2026</span>
+    </div>
+</div>
+
+<!-- PROFESSORS -->
+<h2>Équipe pédagogique</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>Matière</th>
+        <th>Professeur</th>
+        <th>Email</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="prof : ${professors}">
+        <td th:text="${prof.subject}">Java</td>
+        <td th:text="${prof.name}">Jean Dupont</td>
+        <td th:text="${prof.email}">jean.dupont@school.fr</td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- STUDENTS -->
+<h2>Liste des étudiants</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th class="center">#</th>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Email</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="student, iter : ${students}">
+        <td class="center" th:text="${iter.index + 1}">1</td>
+        <td th:text="${student.lastname}">Doe</td>
+        <td th:text="${student.firstname}">John</td>
+        <td th:text="${student.email}">john.doe@mail.com</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

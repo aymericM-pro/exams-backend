@@ -4,6 +4,8 @@ import com.app.examproject.domains.dto.classes.ClassResponse;
 import com.app.examproject.domains.dto.classes.CreateClassRequest;
 import com.app.examproject.domains.dto.users.StudentResponse;
 import com.app.examproject.services.ClassService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,5 +52,17 @@ public class ClassController implements IClassControllerSwagger {
     @Override
     public ResponseEntity<List<StudentResponse>> getStudentsByClass(@PathVariable UUID classId) {
         return ResponseEntity.ok(classService.getStudentsByClass(classId));
+    }
+
+    @GetMapping("/{classId}/students/pdf")
+    public ResponseEntity<byte[]> exportStudentsPdf(@PathVariable UUID classId) {
+
+        byte[] pdfBytes = classService.exportStudentsPdf(classId);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=class-students.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
     }
 }

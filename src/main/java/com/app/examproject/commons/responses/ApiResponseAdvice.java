@@ -34,12 +34,19 @@ public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {
             ServerHttpRequest request,
             ServerHttpResponse response
     ) {
+
+        // 🔴 CRITIQUE : ne jamais wrapper du binaire
+        if (body instanceof byte[]) {
+            return body;
+        }
+
         if (body instanceof ApiResponse<?>) {
             return body;
         }
 
         if (body instanceof Page<?> page) {
-            return ApiResponse.ok(page.getContent(),
+            return ApiResponse.ok(
+                    page.getContent(),
                     new PageMeta(
                             page.getNumber(),
                             page.getSize(),
