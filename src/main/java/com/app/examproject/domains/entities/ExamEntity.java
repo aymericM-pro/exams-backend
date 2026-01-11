@@ -48,7 +48,6 @@ public class ExamEntity {
         q.setExam(this);
     }
 
-
     public void clearQuestions() {
         for (QuestionEntity q : questions) {
             q.setExam(null);

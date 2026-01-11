@@ -1,6 +1,7 @@
 package com.app.examproject.controller.exams;
 
 import com.app.examproject.domains.dto.exams.CreateExamRequest;
+import com.app.examproject.domains.dto.exams.ExamListItemResponse;
 import com.app.examproject.domains.dto.exams.ExamResponse;
 import com.app.examproject.domains.dto.exams.UpdateExamRequest;
 import com.app.examproject.services.ExamService;
@@ -33,7 +34,7 @@ public class ExamController implements IExamControllerSwagger {
 
     @GetMapping
     @Override
-    public ResponseEntity<List<ExamResponse>> getAll() {
+    public ResponseEntity<List<ExamListItemResponse>> getAll() {
         return ResponseEntity.ok(examService.getAll());
     }
 

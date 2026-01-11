@@ -2,6 +2,7 @@ package com.app.examproject.services.impl;
 
 import com.app.examproject.domains.ExamMapper;
 import com.app.examproject.domains.dto.exams.CreateExamRequest;
+import com.app.examproject.domains.dto.exams.ExamListItemResponse;
 import com.app.examproject.domains.dto.exams.ExamResponse;
 import com.app.examproject.domains.dto.exams.UpdateExamRequest;
 import com.app.examproject.domains.entities.ExamEntity;
@@ -38,7 +39,6 @@ public class ExamServiceImpl implements ExamService {
         this.userRepository = userRepository;
     }
 
-    // ================= CREATE =================
     @Override
     public ExamResponse create(UUID userId, CreateExamRequest request) {
         validateCreate(request);
@@ -57,10 +57,10 @@ public class ExamServiceImpl implements ExamService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ExamResponse> getAll() {
+    public List<ExamListItemResponse> getAll() {
         return examRepository.findAll()
                 .stream()
-                .map(examMapper::toResponse)
+                .map(examMapper::toListItemResponse)
                 .toList();
     }
 
@@ -96,8 +96,6 @@ public class ExamServiceImpl implements ExamService {
         return examMapper.toResponse(saved);
     }
 
-    // ================= DELETE =================
-
     @Override
     public void delete(UUID id) {
         if (!examRepository.existsById(id)) {
@@ -105,8 +103,6 @@ public class ExamServiceImpl implements ExamService {
         }
         examRepository.deleteById(id);
     }
-
-    // ================= VALIDATION =================
 
     private void validateCreate(CreateExamRequest request) {
         if (request.title() == null || request.title().isBlank()) {
@@ -129,7 +125,6 @@ public class ExamServiceImpl implements ExamService {
         }
     }
 
-    // ================= RELATION LINKING =================
     private void linkRelations(ExamEntity exam) {
         if (exam.getQuestions() == null) return;
 

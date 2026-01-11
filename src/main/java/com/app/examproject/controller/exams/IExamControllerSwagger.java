@@ -1,6 +1,7 @@
 package com.app.examproject.controller.exams;
 
 import com.app.examproject.domains.dto.exams.CreateExamRequest;
+import com.app.examproject.domains.dto.exams.ExamListItemResponse;
 import com.app.examproject.domains.dto.exams.ExamResponse;
 import com.app.examproject.domains.dto.exams.UpdateExamRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,7 +44,7 @@ public interface IExamControllerSwagger {
     );
 
     @Operation(summary = "Get all exams")
-    ResponseEntity<List<ExamResponse>> getAll();
+    ResponseEntity<List<ExamListItemResponse>> getAll();
 
     @Operation(summary = "Get exam by id")
     @ApiResponse(responseCode = "200", description = "Exam found")
