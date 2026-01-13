@@ -75,13 +75,11 @@
 
 <body>
 
-<!-- HEADER -->
 <h1 th:text="'Classe : ' + ${className}">Classe</h1>
 <div class="subtitle"
      th:text="'Promotion : ' + ${promotion}">
 </div>
 
-<!-- META INFORMATIONS -->
 <div class="meta">
     <div>
         <span><strong>Année académique :</strong></span>
@@ -93,7 +91,6 @@
     </div>
 </div>
 
-<!-- PROFESSORS -->
 <h2>Équipe pédagogique</h2>
 
 <table>
@@ -113,27 +110,25 @@
     </tbody>
 </table>
 
-<!-- STUDENTS -->
 <h2>Liste des étudiants</h2>
 
-<table>
-    <thead>
-    <tr>
-        <th class="center">#</th>
-        <th>Nom</th>
-        <th>Prénom</th>
-        <th>Email</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="student, iter : ${students}">
-        <td class="center" th:text="${iter.index + 1}">1</td>
-        <td th:text="${student.lastname}">Doe</td>
-        <td th:text="${student.firstname}">John</td>
-        <td th:text="${student.email}">john.doe@mail.com</td>
-    </tr>
-    </tbody>
-</table>
-
+    <table>
+        <thead>
+        <tr>
+            <th class="center">#</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="student, iter : ${students}">
+            <td class="center" th:text="${iter.index + 1}">1</td>
+            <td th:text="${student.lastname}">Doe</td>
+            <td th:text="${student.firstname}">John</td>
+            <td th:text="${student.email}">john.doe@mail.com</td>
+        </tr>
+        </tbody>
+    </table>
 </body>
 </html>

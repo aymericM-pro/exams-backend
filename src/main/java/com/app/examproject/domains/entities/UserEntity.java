@@ -1,7 +1,7 @@
 package com.app.examproject.domains.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,7 +9,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserEntity {
 
     @Id
@@ -17,11 +20,11 @@ public class UserEntity {
     @Column(columnDefinition = "UUID", updatable = false, nullable = false, name = "user_id")
     private UUID userId;
 
+    @Column(nullable = false, unique = true, length = 100, name = "keycloak_user_id")
+    private String keycloakUserId;
+
     @Column(nullable = false, unique = true, length = 150)
     private String email;
-
-    @Column(nullable = false)
-    private String password;
 
     @Column(nullable = false, name = "first_name")
     private String firstname;
@@ -50,11 +53,15 @@ public class UserEntity {
     @JoinColumn(name = "class_id")
     private ClassEntity studentClass;
 
-    public UserEntity() {}
-
-    public UserEntity(String email, String password, Set<Role> roles, String firstname, String lastname) {
+    public UserEntity(
+            String keycloakUserId,
+            String email,
+            Set<Role> roles,
+            String firstname,
+            String lastname
+    ) {
+        this.keycloakUserId = keycloakUserId;
         this.email = email;
-        this.password = password;
         this.roles = roles;
         this.firstname = firstname;
         this.lastname = lastname;

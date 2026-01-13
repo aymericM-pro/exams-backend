@@ -3,6 +3,7 @@ package com.app.examproject.services;
 import com.app.examproject.TestFixtures;
 import com.app.examproject.domains.ExamMapper;
 import com.app.examproject.domains.dto.exams.CreateExamRequest;
+import com.app.examproject.domains.dto.exams.ExamListItemResponse;
 import com.app.examproject.domains.dto.exams.ExamResponse;
 import com.app.examproject.domains.dto.exams.UpdateExamRequest;
 import com.app.examproject.domains.entities.ExamEntity;
@@ -53,33 +54,33 @@ class ExamServiceImplTest {
     }
 
     @Test
-    void create_should_save_exam_and_link_relations() {
+    void testCreateExam() {
         CreateExamRequest request = TestFixtures.createExamRequest();
-        ExamEntity mappedEntity = TestFixtures.examEntity();
+        ExamEntity entity = TestFixtures.examEntity();
         UserEntity user = TestFixtures.userEntity(userId);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(examMapper.fromCreate(request)).thenReturn(mappedEntity);
-        when(examRepository.save(mappedEntity)).thenReturn(mappedEntity);
-        when(examMapper.toResponse(mappedEntity)).thenReturn(TestFixtures.examResponse());
+        when(examMapper.fromCreate(request)).thenReturn(entity);
+        when(examRepository.save(entity)).thenReturn(entity);
+        when(examMapper.toResponse(entity)).thenReturn(TestFixtures.examResponse());
 
         ExamResponse response = examService.create(userId, request);
 
         assertThat(response).isNotNull();
-        assertThat(mappedEntity.getUser()).isSameAs(user);
+        assertThat(entity.getUser()).isSameAs(user);
 
-        mappedEntity.getQuestions().forEach(q -> {
-            assertThat(q.getExam()).isSameAs(mappedEntity);
+        entity.getQuestions().forEach(q -> {
+            assertThat(q.getExam()).isSameAs(entity);
             q.getAnswers().forEach(a ->
                     assertThat(a.getQuestion()).isSameAs(q)
             );
         });
 
-        verify(examRepository).save(mappedEntity);
+        verify(examRepository).save(entity);
     }
 
     @Test
-    void create_should_throw_when_user_not_found() {
+    void testCreateExamUserNotFound() {
         CreateExamRequest request = TestFixtures.createExamRequest();
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
@@ -97,7 +98,7 @@ class ExamServiceImplTest {
     }
 
     @Test
-    void create_should_throw_when_request_invalid() {
+    void testCreateExamInvalidRequest() {
         CreateExamRequest request =
                 new CreateExamRequest("", "desc", "S1", List.of());
 
@@ -113,23 +114,47 @@ class ExamServiceImplTest {
         verifyNoInteractions(examRepository);
     }
 
+    @Test
+    void testGetAllExams() {
+        ExamEntity entity = TestFixtures.examEntity();
+        ExamListItemResponse listItem =
+                TestFixtures.examListItemResponse();
+
+        when(examRepository.findAll()).thenReturn(List.of(entity));
+        when(examMapper.toListItemResponse(entity)).thenReturn(listItem);
+
+        List<ExamListItemResponse> result = examService.getAll();
+
+        assertThat(result)
+                .hasSize(1)
+                .containsExactly(listItem);
+
+        verify(examRepository).findAll();
+        verify(examMapper).toListItemResponse(entity);
+        verify(examMapper, never()).toResponse(any());
+    }
 
     @Test
-    void getById_should_return_exam() {
+    void testGetExamById() {
         ExamEntity entity = TestFixtures.examEntity();
 
-        when(examRepository.findById(examId)).thenReturn(Optional.of(entity));
-        when(examMapper.toResponse(entity)).thenReturn(TestFixtures.examResponse());
+        when(examRepository.findExamEntityByExamId(examId))
+                .thenReturn(Optional.of(entity));
+        when(examMapper.toResponse(entity))
+                .thenReturn(TestFixtures.examResponse());
 
         ExamResponse response = examService.getById(examId);
 
         assertThat(response).isNotNull();
-        verify(examRepository).findById(examId);
+
+        verify(examRepository).findExamEntityByExamId(examId);
+        verify(examMapper).toResponse(entity);
     }
 
     @Test
-    void getById_should_throw_when_not_found() {
-        when(examRepository.findById(examId)).thenReturn(Optional.empty());
+    void testGetExamByIdNotFound() {
+        when(examRepository.findExamEntityByExamId(examId))
+                .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> examService.getById(examId))
                 .isInstanceOf(BusinessException.class)
@@ -138,20 +163,23 @@ class ExamServiceImplTest {
                                 .isEqualTo(ExamError.EXAM_NOT_FOUND)
                 );
 
-        verify(examRepository).findById(examId);
+        verify(examRepository).findExamEntityByExamId(examId);
         verifyNoInteractions(examMapper);
     }
 
-
     @Test
-    void update_should_replace_questions_and_save() {
+    void testUpdateExam() {
         ExamEntity existing = TestFixtures.examEntity();
         ExamEntity updated = TestFixtures.examEntity();
 
-        when(examRepository.findById(examId)).thenReturn(Optional.of(existing));
-        when(examMapper.fromUpdate(any(UpdateExamRequest.class))).thenReturn(updated);
-        when(examRepository.save(existing)).thenReturn(existing);
-        when(examMapper.toResponse(existing)).thenReturn(TestFixtures.examResponse());
+        when(examRepository.findById(examId))
+                .thenReturn(Optional.of(existing));
+        when(examMapper.fromUpdate(any(UpdateExamRequest.class)))
+                .thenReturn(updated);
+        when(examRepository.save(existing))
+                .thenReturn(existing);
+        when(examMapper.toResponse(existing))
+                .thenReturn(TestFixtures.examResponse());
 
         ExamResponse response =
                 examService.update(examId, TestFixtures.updateExamRequest());
@@ -161,7 +189,7 @@ class ExamServiceImplTest {
     }
 
     @Test
-    void delete_should_delete_exam() {
+    void testDeleteExam() {
         when(examRepository.existsById(examId)).thenReturn(true);
 
         examService.delete(examId);
@@ -170,7 +198,7 @@ class ExamServiceImplTest {
     }
 
     @Test
-    void delete_should_throw_when_not_found() {
+    void testDeleteExamNotFound() {
         when(examRepository.existsById(examId)).thenReturn(false);
 
         assertThatThrownBy(() -> examService.delete(examId))

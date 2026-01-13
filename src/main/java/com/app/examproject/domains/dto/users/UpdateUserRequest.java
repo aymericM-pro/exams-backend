@@ -12,8 +12,5 @@ public record UpdateUserRequest(
 
     String lastName,
 
-    String role,
-
-    @Size(min = 8, max = 100)
-    String password) {
+    String role){
 }

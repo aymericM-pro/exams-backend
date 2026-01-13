@@ -11,20 +11,38 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+      default_schema: public
+
     show-sql: true
     properties:
       hibernate:
         format_sql: true
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/exam
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+
+keycloak:
+  admin:
+    server-url: http://localhost:8081
+    realm: exam
+    client-id: exam-backend
+    client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
+
+
 
 logging:
   level:
     org.flywaydb: DEBUG
     org.springdoc: DEBUG
     io.swagger.v3: DEBUG
+    org.keycloak: DEBUG
 
 openai:
   api:

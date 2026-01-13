@@ -64,15 +64,13 @@ public class ExamServiceImpl implements ExamService {
                 .toList();
     }
 
-    @Override
     @Transactional(readOnly = true)
     public ExamResponse getById(UUID id) {
-        ExamEntity exam = examRepository.findById(id)
+        ExamEntity exam = examRepository.findExamEntityByExamId(id)
                 .orElseThrow(() -> new BusinessException(ExamError.EXAM_NOT_FOUND));
 
         return examMapper.toResponse(exam);
     }
-
     @Override
     public ExamResponse update(UUID id, UpdateExamRequest request) {
         validateUpdate(request);

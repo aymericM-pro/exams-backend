@@ -96,14 +96,12 @@ public class TestFixtures {
         UserEntity user = new UserEntity();
         user.setUserId(userId);
         user.setEmail("test@test.com");
-        user.setPassword("password");
         return user;
     }
 
     public static CreateUserRequest createUserRequest() {
         return new CreateUserRequest(
                 UUID.randomUUID() + "@test.com",
-                "password123",
                 "USER",
                 "John",
                 "ROLE_STUDENT"
@@ -123,7 +121,6 @@ public class TestFixtures {
     public static UpdateUserRequest updateUserRequest() {
         return new UpdateUserRequest(
                 "updated@test.com",
-                "newPassword123",
                 "John",
                 "Doe",
                 "ROLE_STUDENT"
@@ -150,6 +147,15 @@ public class TestFixtures {
                 "2024-2025",
                 studentIds,
                 professorIds
+        );
+    }
+
+    public static ExamListItemResponse examListItemResponse() {
+        return new ExamListItemResponse(
+                UUID.randomUUID(),
+                "Exam",
+                "S1",
+                Instant.now()
         );
     }
 }

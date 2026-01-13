@@ -11,5 +11,12 @@ spring:
     show-sql: false
     open-in-view: false
 
+keycloak:
+  admin:
+    server-url: http://localhost:9999
+    realm: test
+    client-id: test-client
+    client-secret: test-secret
+
 server:
   port: 8080
