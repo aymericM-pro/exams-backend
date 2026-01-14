@@ -31,6 +31,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn -B sonar:sonar \
-            -Dsonar.projectKey=exams-backend \
+            -Dsonar.projectKey=aymericM-pro_exams-backend \
             -Dsonar.organization=aymericm-pro \
             -Dsonar.host.url=https://sonarcloud.io
