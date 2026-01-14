@@ -1,5 +1,6 @@
 package com.app.examproject.controller.auth;
 
+import com.app.examproject.commons.security.Require;
 import com.app.examproject.domains.UserMapper;
 import com.app.examproject.domains.dto.users.IdentityUser;
 import com.app.examproject.domains.dto.users.UserResponse;
@@ -14,6 +15,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -35,6 +37,7 @@ public class AuthController {
     }
 
     @GetMapping("/me")
+    @Require("PROF")
     public UserResponse me(@AuthenticationPrincipal Jwt jwt) {
         return userMapper.toResponse(
                 currentUserService.getCurrentUser(jwt)
@@ -44,5 +47,17 @@ public class AuthController {
     @GetMapping("/identity-users")
     public List<IdentityUser> listIdentityUsers() {
         return identityUserService.listUsers();
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
+        identityUserService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAllUsers() {
+        identityUserService.deleteAllUsers();
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,5 +1,7 @@
 package com.app.examproject.services;
 
+import com.app.examproject.commons.errors.BusinessException;
+import com.app.examproject.commons.errors.errors.AuthError;
 import com.app.examproject.controller.auth.RegisterRequest;
 import com.app.examproject.domains.UserMapper;
 import com.app.examproject.domains.dto.users.UserResponse;
@@ -14,6 +16,10 @@ import org.keycloak.representations.idm.*;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -23,9 +29,17 @@ public class AuthService {
     private final UserMapper userMapper;
 
     private static final String REALM = "exam";
-    private static final String CLIENT_ID = "exam-backend";
 
     public UserResponse register(RegisterRequest request) {
+
+        // 🔒 BLOCK IF USER IS ALREADY AUTHENTICATED
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth != null
+                && auth.isAuthenticated()
+                && !(auth instanceof AnonymousAuthenticationToken)) {
+            throw new BusinessException(AuthError.USER_ALREADY_AUTHENTICATED);
+        }
 
         UserRepresentation user = new UserRepresentation();
         user.setUsername(request.email());
@@ -44,23 +58,16 @@ public class AuthService {
         var response = usersResource.create(user);
 
         if (response.getStatus() == 409) {
-            throw new IllegalStateException("User already exists in Keycloak");
+            throw new BusinessException(AuthError.USER_ALREADY_EXISTS);
         }
 
         if (response.getStatus() != 201) {
-            throw new IllegalStateException(
-                    "Keycloak user creation failed with status " + response.getStatus()
-            );
+            throw new BusinessException(AuthError.USER_ALREADY_EXISTS);
         }
 
-        // 🔹 EXTRACT KEYCLOAK USER ID
-        // The user ID is part of the 'Location' header in the response
-        // e.g., Location: http://<keycloak-server>/auth/admin/realms/{realm}/users/{id}
-        // We extract the {id} part using a regex
+        String keycloakUserId =
+                response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
 
-        String keycloakUserId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
-
-        // 🔹 ASSIGN REALM ROLE
         RoleRepresentation roleRepresentation =
                 keycloak.realm(REALM)
                         .roles()
@@ -85,5 +92,5 @@ public class AuthService {
 
         return userMapper.toResponse(entity);
     }
-
 }
+

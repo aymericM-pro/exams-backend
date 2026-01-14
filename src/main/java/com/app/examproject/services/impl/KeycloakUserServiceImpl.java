@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +30,45 @@ public class KeycloakUserServiceImpl implements IdentityUserService {
                 .users()
                 .list()
                 .stream()
-                .map(identityUserMapper::toIdentityUser)
+                .map(this::mapUserWithRoles)
                 .toList();
+    }
+
+    @Override
+    public void deleteUser(UUID userId) {
+        keycloak
+                .realm(realm)
+                .users()
+                .delete(userId.toString());
+    }
+
+    public void deleteAllUsers() {
+        List<UserRepresentation> users = keycloak
+                .realm(realm)
+                .users()
+                .list();
+
+        for (UserRepresentation user : users) {
+            keycloak
+                    .realm(realm)
+                    .users()
+                    .delete(user.getId());
+        }
+    }
+
+    private IdentityUser mapUserWithRoles(UserRepresentation user) {
+
+        var roles = keycloak
+                .realm(realm)
+                .users()
+                .get(user.getId())
+                .roles()
+                .realmLevel()
+                .listAll()
+                .stream()
+                .map(r -> r.getName())
+                .collect(Collectors.toSet());
+
+        return identityUserMapper.toIdentityUser(user, roles);
     }
 }
