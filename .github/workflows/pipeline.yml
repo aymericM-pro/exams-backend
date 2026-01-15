@@ -26,6 +26,7 @@ jobs:
       - name: Build & test with coverage
         run: mvn -B clean verify
 
+# test with sass linear
       - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
