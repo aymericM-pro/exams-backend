@@ -60,4 +60,10 @@ public class AuthController {
         identityUserService.deleteAllUsers();
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/reset")
+    public ResponseEntity<Void> resetAllUsers() {
+        identityUserService.deleteAllUsersAndSessions();
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -22,6 +22,7 @@ public class InternalController {
         Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
 
         List<String> roles = List.of();
+
         if (resourceAccess != null && resourceAccess.containsKey("exam-backend")) {
             Map<String, Object> clientAccess =
                     (Map<String, Object>) resourceAccess.get("exam-backend");

@@ -68,6 +68,7 @@ public class ExamEntity {
         ExamEntity that = (ExamEntity) o;
         return Objects.equals(examId, that.examId);
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(examId);

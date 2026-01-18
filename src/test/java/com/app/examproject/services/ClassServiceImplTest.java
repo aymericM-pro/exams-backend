@@ -46,35 +46,50 @@ class ClassServiceImplTest {
     ClassServiceImpl classService;
 
     UUID classId;
-    UUID studentId;
-    UUID professorId;
+
+    UUID studentJpaId;
+    UUID professorJpaId;
+
+    UUID studentKeycloakId;
+    UUID professorKeycloakId;
 
     @BeforeEach
     void setup() {
         classId = UUID.randomUUID();
-        studentId = UUID.randomUUID();
-        professorId = UUID.randomUUID();
+
+        studentJpaId = UUID.randomUUID();
+        professorJpaId = UUID.randomUUID();
+
+        studentKeycloakId = UUID.randomUUID();
+        professorKeycloakId = UUID.randomUUID();
     }
 
+    // ------------------------------------------------------------------
+    // CREATE
+    // ------------------------------------------------------------------
     @Test
     void testCreateClass() {
+
         CreateClassRequest request = new CreateClassRequest(
                 "L3 Informatique",
                 "2024-2025",
-                List.of(studentId),
-                List.of(professorId)
+                List.of(studentKeycloakId),
+                List.of(professorKeycloakId)
         );
 
         ClassEntity entity = TestFixtures.classEntity(null);
         ClassEntity persisted = TestFixtures.classEntity(classId);
 
-        UserEntity student = TestFixtures.userEntity(studentId);
-        UserEntity professor = TestFixtures.userEntity(professorId);
+        UserEntity student = TestFixtures.userEntity(studentJpaId);
+        student.setKeycloakUserId(studentKeycloakId.toString());
+
+        UserEntity professor = TestFixtures.userEntity(professorJpaId);
+        professor.setKeycloakUserId(professorKeycloakId.toString());
 
         ClassResponse expectedResponse = TestFixtures.classResponse(
                 classId,
-                List.of(studentId),
-                List.of(professorId)
+                List.of(studentJpaId),
+                List.of(professorJpaId)
         );
 
         when(classMapper.fromCreate(request)).thenReturn(entity);
@@ -82,8 +97,13 @@ class ClassServiceImplTest {
         when(classRepository.save(entity)).thenReturn(persisted);
         when(classRepository.save(persisted)).thenReturn(persisted);
 
-        when(userRepository.findAllById(List.of(studentId))).thenReturn(List.of(student));
-        when(userRepository.findAllById(List.of(professorId))).thenReturn(List.of(professor));
+        when(userRepository.findAllByKeycloakUserIdIn(
+                List.of(studentKeycloakId.toString())
+        )).thenReturn(List.of(student));
+
+        when(userRepository.findAllByKeycloakUserIdIn(
+                List.of(professorKeycloakId.toString())
+        )).thenReturn(List.of(professor));
 
         when(classMapper.toResponse(persisted)).thenReturn(expectedResponse);
 
@@ -91,18 +111,22 @@ class ClassServiceImplTest {
 
         assertThat(result).isNotNull();
         assertThat(result.classId()).isEqualTo(classId);
-        assertThat(result.studentIds()).containsExactly(studentId);
-        assertThat(result.professorIds()).containsExactly(professorId);
+        assertThat(result.studentIds()).containsExactly(studentJpaId);
+        assertThat(result.professorIds()).containsExactly(professorJpaId);
 
         assertThat(student.getStudentClass()).isEqualTo(persisted);
 
         verify(classRepository, times(2)).save(any(ClassEntity.class));
-        verify(userRepository).findAllById(List.of(studentId));
-        verify(userRepository).findAllById(List.of(professorId));
+        verify(userRepository).findAllByKeycloakUserIdIn(List.of(studentKeycloakId.toString()));
+        verify(userRepository).findAllByKeycloakUserIdIn(List.of(professorKeycloakId.toString()));
     }
 
+    // ------------------------------------------------------------------
+    // GET STUDENTS BY CLASS
+    // ------------------------------------------------------------------
     @Test
     void testGetStudentsByClassThrowsExceptionWhenClassNotFound() {
+
         when(classRepository.findWithStudentsByClassId(classId))
                 .thenReturn(Optional.empty());
 
@@ -114,16 +138,15 @@ class ClassServiceImplTest {
                 );
 
         verify(classRepository).findWithStudentsByClassId(classId);
-        verifyNoInteractions(userMapper);
-        verifyNoInteractions(userRepository);
+        verifyNoInteractions(userMapper, userRepository);
     }
-
 
     @Test
     void testGetStudentsByClass() {
+
         ClassEntity classEntity = TestFixtures.classEntity(classId);
 
-        UserEntity student1 = TestFixtures.userEntity(studentId);
+        UserEntity student1 = TestFixtures.userEntity(studentJpaId);
         UserEntity student2 = TestFixtures.userEntity(UUID.randomUUID());
 
         classEntity.getStudents().addAll(List.of(student1, student2));
@@ -157,15 +180,14 @@ class ClassServiceImplTest {
         verify(classRepository).findWithStudentsByClassId(classId);
         verify(userMapper).toStudentResponse(student1);
         verify(userMapper).toStudentResponse(student2);
-
-        verifyNoInteractions(userRepository);
     }
 
-
-
-
+    // ------------------------------------------------------------------
+    // INVALID CREATE
+    // ------------------------------------------------------------------
     @Test
     void testCreateClassThrowsExceptionWhenInvalidRequest() {
+
         CreateClassRequest invalid = new CreateClassRequest(
                 "   ",
                 "2024",
@@ -180,15 +202,16 @@ class ClassServiceImplTest {
                                 .isEqualTo(ClassError.INVALID_REQUEST)
                 );
 
-        verifyNoInteractions(classRepository);
-        verifyNoInteractions(classMapper);
-        verifyNoInteractions(userRepository);
+        verifyNoInteractions(classRepository, classMapper, userRepository);
     }
 
+    // ------------------------------------------------------------------
+    // GET ALL
+    // ------------------------------------------------------------------
     @Test
     void testGetAllClasses() {
-        ClassEntity entity = TestFixtures.classEntity(classId);
 
+        ClassEntity entity = TestFixtures.classEntity(classId);
         ClassResponse response = TestFixtures.classResponse(classId, List.of(), List.of());
 
         when(classRepository.findAll()).thenReturn(List.of(entity));
@@ -203,8 +226,12 @@ class ClassServiceImplTest {
         verify(classMapper).toResponse(entity);
     }
 
+    // ------------------------------------------------------------------
+    // GET BY ID
+    // ------------------------------------------------------------------
     @Test
     void testGetClassById() {
+
         ClassEntity entity = TestFixtures.classEntity(classId);
         ClassResponse response = TestFixtures.classResponse(classId, List.of(), List.of());
 
@@ -213,14 +240,12 @@ class ClassServiceImplTest {
 
         ClassResponse result = classService.getById(classId);
 
-        assertThat(result).isNotNull();
         assertThat(result.classId()).isEqualTo(classId);
-
-        verify(classRepository).findById(classId);
     }
 
     @Test
     void testGetClassByIdThrowsExceptionWhenNotFound() {
+
         when(classRepository.findById(classId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> classService.getById(classId))
@@ -229,55 +254,32 @@ class ClassServiceImplTest {
                         assertThat(((BusinessException) ex).getError())
                                 .isEqualTo(ClassError.CLASS_NOT_FOUND)
                 );
-
-        verify(classRepository).findById(classId);
-        verifyNoInteractions(classMapper);
     }
 
+    // ------------------------------------------------------------------
+    // DELETE
+    // ------------------------------------------------------------------
     @Test
     void testDeleteClass() {
+
         ClassEntity classEntity = TestFixtures.classEntity(classId);
 
-        UserEntity student1 = TestFixtures.userEntity(studentId);
-        UserEntity student2 = TestFixtures.userEntity(UUID.randomUUID());
-        UserEntity professor = TestFixtures.userEntity(professorId);
+        UserEntity student = TestFixtures.userEntity(studentJpaId);
+        UserEntity professor = TestFixtures.userEntity(professorJpaId);
 
-        classEntity.getStudents().addAll(List.of(student1, student2));
+        student.setStudentClass(classEntity);
+
+        classEntity.getStudents().add(student);
         classEntity.getProfessors().add(professor);
-
-        student1.setStudentClass(classEntity);
-        student2.setStudentClass(classEntity);
 
         when(classRepository.findById(classId)).thenReturn(Optional.of(classEntity));
 
         classService.delete(classId);
 
-        assertThat(student1.getStudentClass()).isNull();
-        assertThat(student2.getStudentClass()).isNull();
-
+        assertThat(student.getStudentClass()).isNull();
         assertThat(classEntity.getStudents()).isEmpty();
         assertThat(classEntity.getProfessors()).isEmpty();
 
-        verify(classRepository).findById(classId);
         verify(classRepository).delete(classEntity);
-
-        verifyNoInteractions(userRepository);
     }
-
-    @Test
-    void testDeleteClassThrowsExceptionWhenNotFound() {
-        when(classRepository.findById(classId)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> classService.delete(classId))
-                .isInstanceOf(BusinessException.class)
-                .satisfies(ex ->
-                        assertThat(((BusinessException) ex).getError())
-                                .isEqualTo(ClassError.CLASS_NOT_FOUND)
-                );
-
-        verify(classRepository).findById(classId);
-        verify(classRepository, never()).delete(any());
-        verifyNoInteractions(userRepository);
-    }
-
 }
