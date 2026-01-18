@@ -9,16 +9,19 @@ import com.app.examproject.domains.entities.Role;
 import com.app.examproject.domains.entities.UserEntity;
 import com.app.examproject.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.representations.idm.*;
+import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
-
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,20 +30,25 @@ public class AuthService {
     private final Keycloak keycloak;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final IdentityUserService identityUserService;
 
     private static final String REALM = "exam";
 
     public UserResponse register(RegisterRequest request) {
 
-        // 🔒 BLOCK IF USER IS ALREADY AUTHENTICATED
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
 
-        if (auth != null
-                && auth.isAuthenticated()
-                && !(auth instanceof AnonymousAuthenticationToken)) {
-            throw new BusinessException(AuthError.USER_ALREADY_AUTHENTICATED);
+        if (auth instanceof JwtAuthenticationToken jwtAuth) {
+            if (isUserStillAuthenticated(jwtAuth)) {
+                throw new BusinessException(AuthError.USER_ALREADY_AUTHENTICATED);
+            }
         }
 
+        // --------------------------------------------------------------
+        // Création de l'utilisateur dans Keycloak
+        // --------------------------------------------------------------
         UserRepresentation user = new UserRepresentation();
         user.setUsername(request.email());
         user.setEmail(request.email());
@@ -62,12 +70,17 @@ public class AuthService {
         }
 
         if (response.getStatus() != 201) {
-            throw new BusinessException(AuthError.USER_ALREADY_EXISTS);
+            throw new BusinessException(AuthError.USER_CREATION_FAILED);
         }
 
         String keycloakUserId =
-                response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
+                response.getLocation()
+                        .getPath()
+                        .replaceAll(".*/([^/]+)$", "$1");
 
+        // --------------------------------------------------------------
+        // Attribution du rôle Keycloak
+        // --------------------------------------------------------------
         RoleRepresentation roleRepresentation =
                 keycloak.realm(REALM)
                         .roles()
@@ -80,6 +93,9 @@ public class AuthService {
                 .realmLevel()
                 .add(List.of(roleRepresentation));
 
+        // --------------------------------------------------------------
+        // Persistance côté domaine
+        // --------------------------------------------------------------
         UserEntity entity = new UserEntity(
                 keycloakUserId,
                 request.email(),
@@ -92,5 +108,26 @@ public class AuthService {
 
         return userMapper.toResponse(entity);
     }
-}
 
+    // ------------------------------------------------------------------
+    // MÉTHODE MÉTIER CLÉ (Option B propre)
+    // ------------------------------------------------------------------
+    private boolean isUserStillAuthenticated(JwtAuthenticationToken jwtAuth) {
+        Jwt jwt = jwtAuth.getToken();
+
+        try {
+            identityUserService.getCurrentUser(jwt);
+            return true;
+
+        } catch (BusinessException ex) {
+
+            if (ex.getError() == AuthError.USER_NOT_FOUND) {
+                return false;
+            }
+
+            throw ex;
+        }
+    }
+
+
+}

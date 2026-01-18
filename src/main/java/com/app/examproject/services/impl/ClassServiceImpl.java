@@ -62,11 +62,19 @@ public class ClassServiceImpl implements ClassService {
         validateCreate(request);
 
         ClassEntity entity = classMapper.fromCreate(request);
-
         ClassEntity persistedClass = classRepository.save(entity);
 
+        // --------------------------------------------------
+        // STUDENTS (Keycloak IDs)
+        // --------------------------------------------------
         if (request.studentIds() != null && !request.studentIds().isEmpty()) {
-            List<UserEntity> students = userRepository.findAllById(request.studentIds());
+
+            List<UserEntity> students =
+                    userRepository.findAllByKeycloakUserIdIn(
+                            request.studentIds().stream()
+                                    .map(UUID::toString)
+                                    .toList()
+                    );
 
             if (students.size() != request.studentIds().size()) {
                 throw new BusinessException(UserError.USER_NOT_FOUND);
@@ -77,8 +85,17 @@ public class ClassServiceImpl implements ClassService {
             }
         }
 
+        // --------------------------------------------------
+        // PROFESSORS (Keycloak IDs)
+        // --------------------------------------------------
         if (request.professorIds() != null && !request.professorIds().isEmpty()) {
-            List<UserEntity> professors = userRepository.findAllById(request.professorIds());
+
+            List<UserEntity> professors =
+                    userRepository.findAllByKeycloakUserIdIn(
+                            request.professorIds().stream()
+                                    .map(UUID::toString)
+                                    .toList()
+                    );
 
             if (professors.size() != request.professorIds().size()) {
                 throw new BusinessException(ClassError.INVALID_REQUEST);

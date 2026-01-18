@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
@@ -55,24 +54,24 @@ public interface IUserControllerSwagger {
                             description = "Filter users by firstname (minimum 2 characters)",
                             example = "John"
                     )
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Users found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponse.class),
+                                    examples = @ExampleObject(
+                                            name = "searchResult",
+                                            summary = "Paginated users search result",
+                                            externalValue = EXAMPLE_USER_SEARCH_RESPONSE
+                                    )
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Invalid search parameters")
             }
     )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Users found",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = UserResponse.class),
-                            examples = @ExampleObject(
-                                    name = "searchResult",
-                                    summary = "Paginated users search result",
-                                    externalValue = EXAMPLE_USER_SEARCH_RESPONSE
-                            )
-                    )
-            ),
-            @ApiResponse(responseCode = "400", description = "Invalid search parameters")
-    })
     ResponseEntity<Page<UserResponse>> search(
             @ParameterObject UserSearchParams params,
             @ParameterObject Pageable pageable
@@ -80,93 +79,91 @@ public interface IUserControllerSwagger {
 
     @Operation(
             summary = "Create a user",
-            description = "Creates a new user with role and credentials"
-    )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "User created",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = UserResponse.class),
-                            examples = @ExampleObject(
-                                    name = "createdUser",
-                                    summary = "Created user",
-                                    externalValue = EXAMPLE_USER_RESPONSE
+            description = "Creates a new user with role and credentials",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "User created",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponse.class),
+                                    examples = @ExampleObject(
+                                            name = "createdUser",
+                                            summary = "Created user",
+                                            externalValue = EXAMPLE_USER_RESPONSE
+                                    )
                             )
-                    )
-            ),
-            @ApiResponse(responseCode = "400", description = "Validation error"),
-            @ApiResponse(responseCode = "409", description = "Email already exists")
-    })
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Validation error"),
+                    @ApiResponse(responseCode = "409", description = "Email already exists")
+            }
+    )
     ResponseEntity<UserResponse> create(
-            @Valid
-            @RequestBody
-            CreateUserRequest request
+            @Valid @RequestBody CreateUserRequest request
     );
 
     @Operation(
             summary = "Create multiple users",
-            description = "Creates multiple users at once"
+            description = "Creates multiple users at once",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Users created",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponse.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Validation error")
+            }
     )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "Users created",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = UserResponse.class)
-                    )
-            ),
-            @ApiResponse(responseCode = "400", description = "Validation error")
-    })
     ResponseEntity<List<UserResponse>> createMany(
             @Valid @RequestBody List<CreateUserRequest> request
     );
 
     @Operation(
             summary = "Get all users",
-            description = "Returns a paginated list of all users"
-    )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Users retrieved successfully",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = UserResponse.class),
-                            examples = @ExampleObject(
-                                    name = "usersPage",
-                                    summary = "Paginated users",
-                                    externalValue = EXAMPLE_USER_SEARCH_RESPONSE
+            description = "Returns a paginated list of all users",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Users retrieved successfully",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponse.class),
+                                    examples = @ExampleObject(
+                                            name = "usersPage",
+                                            summary = "Paginated users",
+                                            externalValue = EXAMPLE_USER_SEARCH_RESPONSE
+                                    )
                             )
                     )
-            )
-    })
+            }
+    )
     ResponseEntity<Page<UserResponse>> getAll(
             @ParameterObject Pageable pageable
     );
 
     @Operation(
             summary = "Get user by id",
-            description = "Returns a single user by its UUID"
-    )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "User found",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = UserResponse.class),
-                            examples = @ExampleObject(
-                                    name = "user",
-                                    summary = "User response",
-                                    externalValue = EXAMPLE_USER_RESPONSE
+            description = "Returns a single user by its UUID",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "User found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponse.class),
+                                    examples = @ExampleObject(
+                                            name = "user",
+                                            summary = "User response",
+                                            externalValue = EXAMPLE_USER_RESPONSE
+                                    )
                             )
-                    )
-            ),
-            @ApiResponse(responseCode = "404", description = "User not found")
-    })
+                    ),
+                    @ApiResponse(responseCode = "404", description = "User not found")
+            }
+    )
     ResponseEntity<UserResponse> getById(
             @PathVariable
             @Parameter(
@@ -178,28 +175,27 @@ public interface IUserControllerSwagger {
             UUID id
     );
 
-
     @Operation(
             summary = "Update a user",
-            description = "Updates an existing user"
-    )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "User updated",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = UserResponse.class),
-                            examples = @ExampleObject(
-                                    name = "updatedUser",
-                                    summary = "Updated user",
-                                    externalValue = EXAMPLE_USER_RESPONSE
+            description = "Updates an existing user",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "User updated",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponse.class),
+                                    examples = @ExampleObject(
+                                            name = "updatedUser",
+                                            summary = "Updated user",
+                                            externalValue = EXAMPLE_USER_RESPONSE
+                                    )
                             )
-                    )
-            ),
-            @ApiResponse(responseCode = "400", description = "Validation error"),
-            @ApiResponse(responseCode = "404", description = "User not found")
-    })
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Validation error"),
+                    @ApiResponse(responseCode = "404", description = "User not found")
+            }
+    )
     ResponseEntity<UserResponse> update(
             @PathVariable
             @Parameter(
@@ -208,20 +204,17 @@ public interface IUserControllerSwagger {
                     required = true
             )
             UUID id,
-
-            @Valid
-            @RequestBody
-            UpdateUserRequest request
+            @Valid @RequestBody UpdateUserRequest request
     );
 
     @Operation(
             summary = "Delete a user",
-            description = "Deletes a user by its UUID"
+            description = "Deletes a user by its UUID",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "User deleted"),
+                    @ApiResponse(responseCode = "404", description = "User not found")
+            }
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "User deleted"),
-            @ApiResponse(responseCode = "404", description = "User not found")
-    })
     ResponseEntity<Void> delete(
             @PathVariable
             @Parameter(
