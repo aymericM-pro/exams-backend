@@ -1,6 +1,3 @@
-
-## name: CI - SonarCloud
-
 on:
   push:
     branches: ["main"]
