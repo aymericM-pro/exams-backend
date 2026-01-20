@@ -1,9 +1,7 @@
 package com.app.examproject.controller;
 
 import com.app.examproject.commons.errors.BusinessException;
-import com.app.examproject.commons.errors.GlobalExceptionHandler;
 import com.app.examproject.commons.errors.errors.UserError;
-import com.app.examproject.controller.users.UserController;
 import com.app.examproject.domains.dto.users.CreateUserRequest;
 import com.app.examproject.domains.dto.users.UpdateUserRequest;
 import com.app.examproject.domains.dto.users.UserResponse;
@@ -12,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -34,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserControllerIT {
+class UserControllerTest {
 
     @Autowired
     MockMvc mockMvc;
