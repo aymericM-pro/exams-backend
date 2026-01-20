@@ -1,37 +1,38 @@
-# ## name: CI - SonarCloud
-#
-# on:
-#   push:
-#     branches: ["main"]
-#   pull_request:
-#     types: [opened, synchronize, reopened]
-#
-# jobs:
-#   sonar:
-#     runs-on: ubuntu-latest
-#
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v4
-#         with:
-#           fetch-depth: 0
-#
-#       - name: Set up JDK 21
-#         uses: actions/setup-java@v4
-#         with:
-#           distribution: temurin
-#           java-version: 21
-#           cache: maven
-#
-#       - name: Build & test with coverage
-#         run: mvn -B clean verify
-#
-# # test with sass linear
-#       - name: SonarCloud Scan
-#         env:
-#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#         run: |
-#           mvn -B sonar:sonar \
-#             -Dsonar.projectKey=aymericM-pro_exams-backend \
-#             -Dsonar.organization=aymericm-pro \
-#             -Dsonar.host.url=https://sonarcloud.io
+
+## name: CI - SonarCloud
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Build & test with coverage
+        run: mvn -B clean verify
+
+# test with sass linear
+      - name: SonarCloud Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn -B sonar:sonar \
+            -Dsonar.projectKey=aymericM-pro_exams-backend \
+            -Dsonar.organization=aymericm-pro \
+            -Dsonar.host.url=https://sonarcloud.io
