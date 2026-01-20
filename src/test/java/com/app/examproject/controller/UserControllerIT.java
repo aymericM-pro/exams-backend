@@ -1,7 +1,9 @@
 package com.app.examproject.controller;
 
 import com.app.examproject.commons.errors.BusinessException;
+import com.app.examproject.commons.errors.GlobalExceptionHandler;
 import com.app.examproject.commons.errors.errors.UserError;
+import com.app.examproject.controller.users.UserController;
 import com.app.examproject.domains.dto.users.CreateUserRequest;
 import com.app.examproject.domains.dto.users.UpdateUserRequest;
 import com.app.examproject.domains.dto.users.UserResponse;
@@ -30,8 +32,13 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 @ActiveProfiles("test")
+@SpringBootTest(
+        classes = {
+                UserController.class,
+                GlobalExceptionHandler.class
+        }
+)
 class UserControllerIT {
 
     @Autowired
