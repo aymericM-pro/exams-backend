@@ -62,11 +62,19 @@ public class ClassServiceImpl implements ClassService {
         validateCreate(request);
 
         ClassEntity entity = classMapper.fromCreate(request);
-
         ClassEntity persistedClass = classRepository.save(entity);
 
+        // --------------------------------------------------
+        // STUDENTS (Keycloak IDs)
+        // --------------------------------------------------
         if (request.studentIds() != null && !request.studentIds().isEmpty()) {
-            List<UserEntity> students = userRepository.findAllById(request.studentIds());
+
+            List<UserEntity> students =
+                    userRepository.findAllByKeycloakUserIdIn(
+                            request.studentIds().stream()
+                                    .map(UUID::toString)
+                                    .toList()
+                    );
 
             if (students.size() != request.studentIds().size()) {
                 throw new BusinessException(UserError.USER_NOT_FOUND);
@@ -77,8 +85,17 @@ public class ClassServiceImpl implements ClassService {
             }
         }
 
+        // --------------------------------------------------
+        // PROFESSORS (Keycloak IDs)
+        // --------------------------------------------------
         if (request.professorIds() != null && !request.professorIds().isEmpty()) {
-            List<UserEntity> professors = userRepository.findAllById(request.professorIds());
+
+            List<UserEntity> professors =
+                    userRepository.findAllByKeycloakUserIdIn(
+                            request.professorIds().stream()
+                                    .map(UUID::toString)
+                                    .toList()
+                    );
 
             if (professors.size() != request.professorIds().size()) {
                 throw new BusinessException(ClassError.INVALID_REQUEST);
@@ -126,6 +143,45 @@ public class ClassServiceImpl implements ClassService {
 
         classRepository.delete(entity);
     }
+
+    @Override
+    @Transactional
+    public void removeStudentFromClass(UUID classId, UUID studentId) {
+
+        ClassEntity classEntity = classRepository.findWithStudentsByClassId(classId)
+                .orElseThrow(() -> new BusinessException(ClassError.CLASS_NOT_FOUND));
+
+        UserEntity student = userRepository
+                .findById(studentId)
+                .orElseThrow(() -> new BusinessException(UserError.USER_NOT_FOUND));
+
+        if (!classEntity.getStudents().contains(student)) {
+            throw new BusinessException(ClassError.STUDENT_NOT_IN_CLASS);
+        }
+
+        classEntity.removeStudent(student);
+        student.setStudentClass(null);
+
+        classRepository.save(classEntity);
+        userRepository.save(student);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ClassResponse> getClassesByTeacher(UUID teacherId) {
+
+        UserEntity professor = userRepository
+                .findByKeycloakUserId(teacherId.toString())
+                .orElseThrow(() -> new BusinessException(UserError.USER_NOT_FOUND));
+
+        List<ClassEntity> classes = classRepository.findWithProfessors(professor);
+        classes.forEach(c -> c.getStudents().size());
+
+        return classes.stream()
+                .map(classMapper::toResponse)
+                .toList();
+    }
+
 
     @Override
     @Transactional(readOnly = true)

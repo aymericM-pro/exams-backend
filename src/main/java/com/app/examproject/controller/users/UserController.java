@@ -4,7 +4,6 @@ import com.app.examproject.domains.dto.users.CreateUserRequest;
 import com.app.examproject.domains.dto.users.UpdateUserRequest;
 import com.app.examproject.domains.dto.users.UserResponse;
 import com.app.examproject.services.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -23,8 +22,6 @@ public class UserController implements IUserControllerSwagger {
 
     private final UserService userService;
 
-    // ================= SEARCH =================
-
     @Override
     @GetMapping("/search")
     public ResponseEntity<Page<UserResponse>> search(
@@ -38,15 +35,11 @@ public class UserController implements IUserControllerSwagger {
         );
     }
 
-    // ================= GET BY ID =================
-
     @Override
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getById(id));
     }
-
-    // ================= GET ALL =================
 
     @Override
     @GetMapping
@@ -56,31 +49,20 @@ public class UserController implements IUserControllerSwagger {
         return ResponseEntity.ok(userService.getAll(pageable));
     }
 
-    // ================= CREATE =================
-
     @Override
     @PostMapping
     public ResponseEntity<UserResponse> create(
             @RequestBody CreateUserRequest request
     ) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(userService.create(request));
-    }
-
-    // ================= CREATE MANY =================
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));}
 
     @Override
     @PostMapping("/batch")
     public ResponseEntity<List<UserResponse>> createMany(
             @RequestBody List<CreateUserRequest> requests
     ) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(userService.createMany(requests));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createMany(requests));
     }
-
-    // ================= UPDATE =================
 
     @Override
     @PutMapping("/{id}")
@@ -90,8 +72,6 @@ public class UserController implements IUserControllerSwagger {
     ) {
         return ResponseEntity.ok(userService.update(id, request));
     }
-
-    // ================= DELETE =================
 
     @Override
     @DeleteMapping("/{id}")

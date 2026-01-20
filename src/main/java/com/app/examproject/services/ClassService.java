@@ -14,4 +14,6 @@ public interface ClassService {
     ClassResponse getById(UUID id);
     void delete(UUID id);
     byte[] exportStudentsPdf(UUID classId);
+    List<ClassResponse> getClassesByTeacher(UUID teacherId);
+    void removeStudentFromClass(UUID classId, UUID studentId);
 }

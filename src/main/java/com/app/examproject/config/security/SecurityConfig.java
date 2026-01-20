@@ -23,6 +23,10 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                /*.authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/publics/**",
                                 "/api/auth/**",
@@ -30,7 +34,7 @@ public class SecurityConfig {
                                 "/v3/api-docs/**"
                         ).permitAll()
                         .anyRequest().authenticated()
-                )
+                )*/
                 .oauth2ResourceServer(oauth -> oauth
                         .jwt(jwt -> jwt
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
@@ -40,7 +44,7 @@ public class SecurityConfig {
     }
 
     /**
-     * 🔐 Keycloak → Spring Security roles mapping
+     * Keycloak → Spring Security roles mapping
      *
      * Maps:
      *   realm_access.roles = ["PROF", "STUDENT"]

@@ -35,8 +35,6 @@ keycloak:
     client-id: exam-backend
     client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
 
-
-
 logging:
   level:
     org.flywaydb: DEBUG

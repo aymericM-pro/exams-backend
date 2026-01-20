@@ -4,6 +4,7 @@ import com.app.examproject.commons.errors.BusinessError;
 import org.springframework.http.HttpStatus;
 
 public enum ClassError implements BusinessError {
+    STUDENT_NOT_IN_CLASS("CLASS_403", "Student is not enrolled in the class", HttpStatus.FORBIDDEN),
     CLASS_NOT_FOUND("CLASS_404", "Class not found", HttpStatus.NOT_FOUND),
     INVALID_REQUEST("CLASS_400", "Invalid class request", HttpStatus.BAD_REQUEST);
 
