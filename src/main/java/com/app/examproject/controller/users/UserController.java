@@ -29,10 +29,7 @@ public class UserController implements IUserControllerSwagger {
             @ParameterObject Pageable pageable
     ) {
         params.formalize();
-
-        return ResponseEntity.ok(
-                userService.search(params, pageable)
-        );
+        return ResponseEntity.ok(userService.search(params, pageable));
     }
 
     @Override

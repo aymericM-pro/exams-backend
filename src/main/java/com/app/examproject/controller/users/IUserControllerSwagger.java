@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.UUID;
 
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 
 @Tag(
@@ -34,9 +35,14 @@ public interface IUserControllerSwagger {
     String PARAM_ROLE = "role";
     String PARAM_FIRSTNAME = "firstname";
     String PARAM_ID = "id";
+    String PARAM_PAGE = "page";
+    String PARAM_SIZE = "size";
+    String PARAM_SORT = "sort";
 
     String EXAMPLE_USER_RESPONSE = "/examples/users/user-response.json";
     String EXAMPLE_USER_SEARCH_RESPONSE = "/examples/users/user-search-response.json";
+
+    /* ===================== SEARCH ===================== */
 
     @Operation(
             summary = "Search users",
@@ -53,6 +59,24 @@ public interface IUserControllerSwagger {
                             in = QUERY,
                             description = "Filter users by firstname (minimum 2 characters)",
                             example = "John"
+                    ),
+                    @Parameter(
+                            name = PARAM_PAGE,
+                            in = QUERY,
+                            description = "Page index (0-based)",
+                            example = "0"
+                    ),
+                    @Parameter(
+                            name = PARAM_SIZE,
+                            in = QUERY,
+                            description = "Page size",
+                            example = "20"
+                    ),
+                    @Parameter(
+                            name = PARAM_SORT,
+                            in = QUERY,
+                            description = "Sorting criteria (e.g. firstname,asc)",
+                            example = "firstname,asc"
                     )
             },
             responses = {
@@ -76,6 +100,8 @@ public interface IUserControllerSwagger {
             @ParameterObject UserSearchParams params,
             @ParameterObject Pageable pageable
     );
+
+    /* ===================== CREATE ===================== */
 
     @Operation(
             summary = "Create a user",
@@ -102,6 +128,8 @@ public interface IUserControllerSwagger {
             @Valid @RequestBody CreateUserRequest request
     );
 
+    /* ===================== CREATE MANY ===================== */
+
     @Operation(
             summary = "Create multiple users",
             description = "Creates multiple users at once",
@@ -121,9 +149,31 @@ public interface IUserControllerSwagger {
             @Valid @RequestBody List<CreateUserRequest> request
     );
 
+    /* ===================== GET ALL ===================== */
+
     @Operation(
             summary = "Get all users",
             description = "Returns a paginated list of all users",
+            parameters = {
+                    @Parameter(
+                            name = PARAM_PAGE,
+                            in = QUERY,
+                            description = "Page index (0-based)",
+                            example = "0"
+                    ),
+                    @Parameter(
+                            name = PARAM_SIZE,
+                            in = QUERY,
+                            description = "Page size",
+                            example = "20"
+                    ),
+                    @Parameter(
+                            name = PARAM_SORT,
+                            in = QUERY,
+                            description = "Sorting criteria (e.g. lastname,desc)",
+                            example = "lastname,desc"
+                    )
+            },
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -144,9 +194,20 @@ public interface IUserControllerSwagger {
             @ParameterObject Pageable pageable
     );
 
+    /* ===================== GET BY ID ===================== */
+
     @Operation(
             summary = "Get user by id",
             description = "Returns a single user by its UUID",
+            parameters = {
+                    @Parameter(
+                            name = PARAM_ID,
+                            in = PATH,
+                            description = "User UUID",
+                            required = true,
+                            example = "c1b3c4d5-9e6a-4a8f-9c0d-123456789abc"
+                    )
+            },
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -165,19 +226,22 @@ public interface IUserControllerSwagger {
             }
     )
     ResponseEntity<UserResponse> getById(
-            @PathVariable
-            @Parameter(
-                    name = PARAM_ID,
-                    description = "User UUID",
-                    required = true,
-                    example = "c1b3c4d5-9e6a-4a8f-9c0d-123456789abc"
-            )
-            UUID id
+            @PathVariable UUID id
     );
+
+    /* ===================== UPDATE ===================== */
 
     @Operation(
             summary = "Update a user",
             description = "Updates an existing user",
+            parameters = {
+                    @Parameter(
+                            name = PARAM_ID,
+                            in = PATH,
+                            description = "User UUID",
+                            required = true
+                    )
+            },
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -197,31 +261,29 @@ public interface IUserControllerSwagger {
             }
     )
     ResponseEntity<UserResponse> update(
-            @PathVariable
-            @Parameter(
-                    name = PARAM_ID,
-                    description = "User UUID",
-                    required = true
-            )
-            UUID id,
+            @PathVariable UUID id,
             @Valid @RequestBody UpdateUserRequest request
     );
+
+    /* ===================== DELETE ===================== */
 
     @Operation(
             summary = "Delete a user",
             description = "Deletes a user by its UUID",
+            parameters = {
+                    @Parameter(
+                            name = PARAM_ID,
+                            in = PATH,
+                            description = "User UUID",
+                            required = true
+                    )
+            },
             responses = {
                     @ApiResponse(responseCode = "204", description = "User deleted"),
                     @ApiResponse(responseCode = "404", description = "User not found")
             }
     )
     ResponseEntity<Void> delete(
-            @PathVariable
-            @Parameter(
-                    name = PARAM_ID,
-                    description = "User UUID",
-                    required = true
-            )
-            UUID id
+            @PathVariable UUID id
     );
 }

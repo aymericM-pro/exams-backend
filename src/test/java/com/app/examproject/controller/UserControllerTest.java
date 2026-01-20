@@ -16,6 +16,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -25,9 +26,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/*
-@WebMvcTest(UserController.class)
-*/
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -39,10 +37,7 @@ class UserControllerTest {
     @MockitoBean
     UserService userService;
 
-    // ✅ ObjectMapper LOCAL, pas Spring-managed
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    /* ===================== CREATE ===================== */
 
     @Test
     void createUserReturns201() throws Exception {
@@ -91,8 +86,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.status").value(400));
     }
 
-    /* ===================== GET ===================== */
-
     @Test
     void getAllUsersReturns200() throws Exception {
         mockMvc.perform(get("/api/users"))
@@ -131,8 +124,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.error").value("User not found"))
                 .andExpect(jsonPath("$.status").value(404));
     }
-
-    /* ===================== UPDATE ===================== */
 
     @Test
     void updateUserByIdReturns200() throws Exception {
@@ -183,8 +174,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.code").value("USER_404"));
     }
 
-    /* ===================== DELETE ===================== */
-
     @Test
     void deleteUserByIdReturns204() throws Exception {
         mockMvc.perform(delete("/api/users/{id}", UUID.randomUUID()))
@@ -202,8 +191,6 @@ class UserControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("USER_404"));
     }
-
-    /* ===================== SEARCH ===================== */
 
     @Test
     void searchUsersWithoutFiltersReturns200() throws Exception {
@@ -224,4 +211,57 @@ class UserControllerTest {
                         .param("role", "STUDENT"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void createManyUsersReturns201() throws Exception {
+
+        CreateUserRequest user1 = new CreateUserRequest(
+                "john_doe@gmail.com",
+                "John",
+                "Doe",
+                "ROLE_STUDENT"
+        );
+
+        CreateUserRequest user2 = new CreateUserRequest(
+                "john_doe@gmail.com",
+                "John",
+                "Doe",
+                "ROLE_STUDENT"
+        );
+
+        UserResponse response1 = UserResponse.builder()
+                .userId(UUID.randomUUID())
+                .email("john_doe@gmail.com")
+                .firstname("John")
+                .lastname("Doe")
+                .role("ROLE_STUDENT")
+                .build();
+
+        UserResponse response2 = UserResponse.builder()
+                .userId(UUID.randomUUID())
+                .email("john_doe@gmail.com")
+                .firstname("John")
+                .lastname("Doe")
+                .role("ROLE_STUDENT")
+                .build();
+
+        when(userService.createMany(any()))
+                .thenReturn(List.of(response1, response2));
+
+        mockMvc.perform(post("/api/users/batch")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(List.of(user1, user2))))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(2))
+                .andExpect(jsonPath("$.data[0].email").value("john_doe@gmail.com"))
+                .andExpect(jsonPath("$.data[1].email").value("john_doe@gmail.com"))
+                .andExpect(jsonPath("$.data[0].firstname").value("John"))
+                .andExpect(jsonPath("$.data[1].firstname").value("John"))
+                .andExpect(jsonPath("$.data[0].lastname").value("Doe"))
+                .andExpect(jsonPath("$.data[1].lastname").value("Doe"))
+                .andExpect(jsonPath("$.data[0].role").value("ROLE_STUDENT"))
+                .andExpect(jsonPath("$.data[1].role").value("ROLE_STUDENT"));
+    }
+
 }
