@@ -145,6 +145,45 @@ public class ClassServiceImpl implements ClassService {
     }
 
     @Override
+    @Transactional
+    public void removeStudentFromClass(UUID classId, UUID studentId) {
+
+        ClassEntity classEntity = classRepository.findWithStudentsByClassId(classId)
+                .orElseThrow(() -> new BusinessException(ClassError.CLASS_NOT_FOUND));
+
+        UserEntity student = userRepository
+                .findById(studentId)
+                .orElseThrow(() -> new BusinessException(UserError.USER_NOT_FOUND));
+
+        if (!classEntity.getStudents().contains(student)) {
+            throw new BusinessException(ClassError.STUDENT_NOT_IN_CLASS);
+        }
+
+        classEntity.removeStudent(student);
+        student.setStudentClass(null);
+
+        classRepository.save(classEntity);
+        userRepository.save(student);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ClassResponse> getClassesByTeacher(UUID teacherId) {
+
+        UserEntity professor = userRepository
+                .findByKeycloakUserId(teacherId.toString())
+                .orElseThrow(() -> new BusinessException(UserError.USER_NOT_FOUND));
+
+        List<ClassEntity> classes = classRepository.findWithProfessors(professor);
+        classes.forEach(c -> c.getStudents().size());
+
+        return classes.stream()
+                .map(classMapper::toResponse)
+                .toList();
+    }
+
+
+    @Override
     @Transactional(readOnly = true)
     public byte[] exportStudentsPdf(UUID classId) {
 

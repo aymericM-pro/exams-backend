@@ -29,6 +29,12 @@ public class ClassController implements IClassControllerSwagger {
         return ResponseEntity.status(201).body(created);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<List<ClassResponse>> getMyClasses() {
+        UUID teacherId = UUID.fromString("78c1263b-f1f4-42dd-9298-bc9852a23853");
+        return ResponseEntity.ok(classService.getClassesByTeacher(teacherId));
+    }
+
     @GetMapping
     @Override
     public ResponseEntity<List<ClassResponse>> getAll() {
@@ -50,7 +56,9 @@ public class ClassController implements IClassControllerSwagger {
 
     @GetMapping("/{classId}/students")
     @Override
-    public ResponseEntity<List<StudentResponse>> getStudentsByClass(@PathVariable UUID classId) {
+    public ResponseEntity<List<StudentResponse>> getStudentsByClass(
+            @PathVariable UUID classId
+    ) {
         return ResponseEntity.ok(classService.getStudentsByClass(classId));
     }
 
@@ -60,9 +68,21 @@ public class ClassController implements IClassControllerSwagger {
         byte[] pdfBytes = classService.exportStudentsPdf(classId);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=class-students.pdf")
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=class-students.pdf"
+                )
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdfBytes);
+    }
+
+    @DeleteMapping("/{classId}/students/{studentId}")
+    @Override
+    public ResponseEntity<Void> removeStudentFromClass(
+            @PathVariable UUID classId,
+            @PathVariable UUID studentId
+    ) {
+        classService.removeStudentFromClass(classId, studentId);
+        return ResponseEntity.noContent().build();
     }
 }

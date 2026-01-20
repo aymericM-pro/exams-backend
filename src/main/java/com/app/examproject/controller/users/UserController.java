@@ -4,7 +4,6 @@ import com.app.examproject.domains.dto.users.CreateUserRequest;
 import com.app.examproject.domains.dto.users.UpdateUserRequest;
 import com.app.examproject.domains.dto.users.UserResponse;
 import com.app.examproject.services.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -55,19 +54,14 @@ public class UserController implements IUserControllerSwagger {
     public ResponseEntity<UserResponse> create(
             @RequestBody CreateUserRequest request
     ) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(userService.create(request));
-    }
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));}
 
     @Override
     @PostMapping("/batch")
     public ResponseEntity<List<UserResponse>> createMany(
             @RequestBody List<CreateUserRequest> requests
     ) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(userService.createMany(requests));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createMany(requests));
     }
 
     @Override

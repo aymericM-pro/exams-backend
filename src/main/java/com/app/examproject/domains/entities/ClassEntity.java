@@ -1,14 +1,10 @@
 package com.app.examproject.domains.entities;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -31,9 +27,10 @@ public class ClassEntity {
     private String graduationYear;
 
     @OneToMany(
-            mappedBy = "studentClass"
+            mappedBy = "studentClass",
+            orphanRemoval = true
     )
-    private List<UserEntity> students = new ArrayList<>();
+    private Set<UserEntity> students = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -41,7 +38,7 @@ public class ClassEntity {
             joinColumns = @JoinColumn(name = "class_id"),
             inverseJoinColumns = @JoinColumn(name = "professor_id")
     )
-    private List<UserEntity> professors = new ArrayList<>();
+    private Set<UserEntity> professors = new HashSet<>();
 
     public void addStudent(UserEntity student) {
         students.add(student);
@@ -66,18 +63,15 @@ public class ClassEntity {
         if (this == o) {
             return true;
         }
-
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         ClassEntity that = (ClassEntity) o;
-
-        return Objects.equals(classId, that.classId);
+        return classId != null && classId.equals(that.classId);
     }
 
     @Override
     public int hashCode() {
-        return classId != null ? classId.hashCode() : 0;
+        return getClass().hashCode();
     }
 }

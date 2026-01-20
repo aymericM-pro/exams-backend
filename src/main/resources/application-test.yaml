@@ -15,3 +15,12 @@ spring:
 openai:
   api:
     key: test-key
+
+keycloak:
+  admin:
+    server-url: http://localhost:9999
+    realm: test
+    client-id: test
+    client-secret: test
+    username: test
+    password: test
