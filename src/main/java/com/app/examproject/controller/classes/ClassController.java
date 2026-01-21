@@ -56,22 +56,16 @@ public class ClassController implements IClassControllerSwagger {
 
     @GetMapping("/{classId}/students")
     @Override
-    public ResponseEntity<List<StudentResponse>> getStudentsByClass(
-            @PathVariable UUID classId
-    ) {
+    public ResponseEntity<List<StudentResponse>> getStudentsByClass(@PathVariable UUID classId) {
         return ResponseEntity.ok(classService.getStudentsByClass(classId));
     }
 
     @GetMapping("/{classId}/students/pdf")
     public ResponseEntity<byte[]> exportStudentsPdf(@PathVariable UUID classId) {
-
         byte[] pdfBytes = classService.exportStudentsPdf(classId);
 
         return ResponseEntity.ok()
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=class-students.pdf"
-                )
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=class-students.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdfBytes);
     }

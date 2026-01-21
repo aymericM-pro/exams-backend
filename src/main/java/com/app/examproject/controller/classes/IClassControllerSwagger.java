@@ -19,20 +19,12 @@ import java.util.UUID;
 @Tag(name = "Classes", description = "APIs for managing classes")
 public interface IClassControllerSwagger {
 
-    @Operation(summary = "Create a class",
+    @Operation(
+                summary = "Create a class",
             description = "Creates a new class with the provided details.",
             responses = {
-                    @ApiResponse(
-                            responseCode = "201",
-                            description = "Class successfully created",
-                            content = @Content(
-                                    schema = @Schema(implementation = ClassResponse.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Invalid request payload"
-                    )
+                    @ApiResponse(responseCode = "201", description = "Class successfully created", content = @Content(schema = @Schema(implementation = ClassResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "Invalid request payload")
             }
     )
     ResponseEntity<ClassResponse> create(
