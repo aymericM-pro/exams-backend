@@ -1,9 +1,9 @@
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/examdb
+    url: jdbc:postgresql://postgres:5432/examdb
     username: exam
     password: exam
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
@@ -11,12 +11,11 @@ spring:
     show-sql: false
     open-in-view: false
 
-keycloak:
-  admin:
-    server-url: http://localhost:9999
-    realm: test
-    client-id: test-client
-    client-secret: test-secret
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/exam
 
 server:
   port: 8080

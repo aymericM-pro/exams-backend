@@ -1,18 +1,15 @@
-FROM eclipse-temurin:21-jdk AS builder
-
-WORKDIR /app
-
-COPY pom.xml .
-COPY src ./src
-
-RUN ./mvnw -B clean package -DskipTests
-
 FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-COPY --from=builder /app/target/*.jar app.jar
+# Copier le JAR déjà buildé
+COPY target/*.jar app.jar
 
+# Profil Spring par défaut (override possible)
+ENV SPRING_PROFILES_ACTIVE=prod
+
+# Port exposé par Spring Boot
 EXPOSE 8080
 
+# Lancement de l'application
 ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -38,13 +38,10 @@ class ClassControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-
     @Test
     void getClassReturns404WhenClassNotFound() throws Exception {
         UUID classId = UUID.randomUUID();
-
-        when(classService.getById(classId))
-                .thenThrow(new BusinessException(ClassError.CLASS_NOT_FOUND));
+        when(classService.getById(classId)).thenThrow(new BusinessException(ClassError.CLASS_NOT_FOUND));
 
         mockMvc.perform(get("/api/classes/{id}", classId))
                 .andExpect(status().isNotFound());
@@ -230,5 +227,34 @@ class ClassControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(classService).removeStudentFromClass(classId, studentId);
+    }
+
+    @Test
+    void getMyClassesReturns200() throws Exception {
+        UUID teacherId = UUID.fromString("78c1263b-f1f4-42dd-9298-bc9852a23853");
+
+        UUID classId = UUID.randomUUID();
+        UUID studentId = UUID.randomUUID();
+
+        ClassResponse response = new ClassResponse(
+                classId,
+                "My Class",
+                "2025",
+                List.of(studentId),
+                List.of(teacherId)
+        );
+
+        when(classService.getClassesByTeacher(teacherId))
+                .thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/classes/me"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].classId").value(classId.toString()))
+                .andExpect(jsonPath("$.data[0].name").value("My Class"))
+                .andExpect(jsonPath("$.data[0].graduationYear").value("2025"))
+                .andExpect(jsonPath("$.data[0].studentIds[0]").value(studentId.toString()))
+                .andExpect(jsonPath("$.data[0].professorIds[0]").value(teacherId.toString()));
+
+        verify(classService).getClassesByTeacher(teacherId);
     }
 }
