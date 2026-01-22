@@ -6,7 +6,6 @@ on:
 
 jobs:
 
-  # 1️⃣ BUILD — compilation et packaging uniquement
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -22,19 +21,15 @@ jobs:
           java-version: 21
           cache: maven
 
-      # clean + package sans exécuter les tests
       - name: Build (no tests)
         run: mvn -B clean package -DskipTests
 
-      # Optionnel mais utile si tu veux réutiliser l’artefact plus tard
       - name: Upload jar
         uses: actions/upload-artifact@v4
         with:
           name: app-jar
           path: target/*.jar
 
-
-  # 2️⃣ TESTS — exécution des tests + génération JaCoCo
   tests:
     name: Tests & Coverage
     runs-on: ubuntu-latest
@@ -51,9 +46,8 @@ jobs:
           java-version: 21
           cache: maven
 
-      # Exécute les tests et génère la couverture
       - name: Run tests with coverage
-        run: mvn -B test
+        run: mvn -B clean verify
 
       - name: Upload JaCoCo report
         uses: actions/upload-artifact@v4
@@ -62,7 +56,6 @@ jobs:
           path: target/site/jacoco
 
 
-  # 3️⃣ SONAR — analyse qualité basée sur les résultats précédents
   sonar:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
