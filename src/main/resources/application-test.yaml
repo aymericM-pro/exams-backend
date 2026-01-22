@@ -22,5 +22,3 @@ keycloak:
     realm: test
     client-id: test
     client-secret: test
-    username: test
-    password: test

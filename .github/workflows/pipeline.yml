@@ -147,7 +147,7 @@ jobs:
             -d '{
               "username": "CI Pipeline",
               "embeds": [{
-                "title": "✅ Pipeline réussie",
+                "title": "Pipeline réussie",
                 "description": "Build, tests, SonarCloud et Docker ont réussi.",
                 "color": 3066993,
                 "fields": [

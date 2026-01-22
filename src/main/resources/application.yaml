@@ -1,3 +1,24 @@
 spring:
   application:
     name: exam-api
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY:}
+
+keycloak:
+  admin:
+    client-id: exam-backend

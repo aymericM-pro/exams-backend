@@ -1,22 +1,17 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/examdb
-    username: exam
-    password: exam
-    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME:exam}
+    password: ${DB_PASSWORD:exam}
 
-  flyway:
-    locations: classpath:db/migration
-    enabled: true
   jpa:
+    show-sql: true
     hibernate:
       ddl-auto: none
-      default_schema: public
 
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
 
   security:
     oauth2:
@@ -32,7 +27,6 @@ keycloak:
   admin:
     server-url: http://localhost:8081
     realm: exam
-    client-id: exam-backend
     client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
 
 logging:
@@ -42,6 +36,3 @@ logging:
     io.swagger.v3: DEBUG
     org.keycloak: DEBUG
 
-openai:
-  api:
-    key: ${OPENAI_API_KEY}
