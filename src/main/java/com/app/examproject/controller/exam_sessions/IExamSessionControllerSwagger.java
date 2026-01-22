@@ -19,49 +19,82 @@ import java.util.UUID;
 @Tag(name = "Exam Sessions", description = "APIs for managing exam sessions")
 public interface IExamSessionControllerSwagger {
 
-    @Operation(summary = "Create an exam session")
-    @ApiResponse(responseCode = "201", description = "Exam session created")
-    @ApiResponse(responseCode = "400", description = "Invalid request")
-    ResponseEntity<ExamSessionResponse> create(
-            @RequestBody(
+    @Operation(
+            summary = "Create an exam session",
+            requestBody = @RequestBody(
                     required = true,
                     description = "Exam session creation payload",
                     content = @Content(
                             schema = @Schema(implementation = CreateExamSessionRequest.class)
                     )
-            )
-            CreateExamSessionRequest request
-    );
+            ),
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Exam session created"),
+                    @ApiResponse(responseCode = "400", description = "Invalid request")
+            }
+    )
+    ResponseEntity<ExamSessionResponse> create(CreateExamSessionRequest request);
 
-    @Operation(summary = "Get all exam sessions")
+    @Operation(
+            summary = "Get all exam sessions",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "List of exam sessions")
+            }
+    )
     ResponseEntity<List<ExamSessionResponse>> getAll();
 
-    @Operation(summary = "Get exam session by id")
-    @ApiResponse(responseCode = "404", description = "Exam session not found")
-    ResponseEntity<ExamSessionResponse> getById(
-            @Parameter(description = "Exam session ID", required = true)
-            @PathVariable UUID id
-    );
+    @Operation(
+            summary = "Get exam session by id",
+            parameters = {
+                    @Parameter(
+                            name = "id",
+                            description = "Exam session ID",
+                            required = true
+                    )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Exam session found"),
+                    @ApiResponse(responseCode = "404", description = "Exam session not found")
+            }
+    )
+    ResponseEntity<ExamSessionResponse> getById(UUID id);
 
-    @Operation(summary = "Update an exam session")
-    @ApiResponse(responseCode = "404", description = "Exam session not found")
-    ResponseEntity<ExamSessionResponse> update(
-            @Parameter(description = "Exam session ID", required = true)
-            @PathVariable UUID id,
-            @RequestBody(
+    @Operation(
+            summary = "Update an exam session",
+            parameters = {
+                    @Parameter(
+                            name = "id",
+                            description = "Exam session ID",
+                            required = true
+                    )
+            },
+            requestBody = @RequestBody(
                     required = true,
                     description = "Exam session update payload",
                     content = @Content(
                             schema = @Schema(implementation = UpdateExamSessionRequest.class)
                     )
-            )
-            UpdateExamSessionRequest request
-    );
+            ),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Exam session updated"),
+                    @ApiResponse(responseCode = "404", description = "Exam session not found")
+            }
+    )
+    ResponseEntity<ExamSessionResponse> update(UUID id, UpdateExamSessionRequest request);
 
-    @Operation(summary = "Delete an exam session")
-    @ApiResponse(responseCode = "204", description = "Exam session deleted")
-    ResponseEntity<Void> delete(
-            @Parameter(description = "Exam session ID", required = true)
-            @PathVariable UUID id
-    );
+    @Operation(
+            summary = "Delete an exam session",
+            parameters = {
+                    @Parameter(
+                            name = "id",
+                            description = "Exam session ID",
+                            required = true
+                    )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Exam session deleted"),
+                    @ApiResponse(responseCode = "404", description = "Exam session not found")
+            }
+    )
+    ResponseEntity<Void> delete(UUID id);
 }

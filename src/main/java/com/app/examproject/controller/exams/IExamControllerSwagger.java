@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,15 +28,19 @@ public interface IExamControllerSwagger {
                             required = true
                     )
             },
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    description = "Exam creation payload",
+                    content = @Content(
+                            schema = @Schema(implementation = CreateExamRequest.class)
+                    )
+            ),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Exam created"),
                     @ApiResponse(responseCode = "400", description = "Invalid request")
             }
     )
-    ResponseEntity<ExamResponse> create(
-            @PathVariable UUID userId,
-            CreateExamRequest request
-    );
+    ResponseEntity<ExamResponse> create(UUID userId, CreateExamRequest request);
 
     @Operation(
             summary = "Get all exams",
@@ -67,9 +70,7 @@ public interface IExamControllerSwagger {
                     @ApiResponse(responseCode = "404", description = "Exam not found")
             }
     )
-    ResponseEntity<ExamResponse> getById(
-            @PathVariable UUID id
-    );
+    ResponseEntity<ExamResponse> getById(UUID id);
 
     @Operation(
             summary = "Update an exam",
@@ -80,16 +81,20 @@ public interface IExamControllerSwagger {
                             required = true
                     )
             },
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    description = "Exam update payload",
+                    content = @Content(
+                            schema = @Schema(implementation = UpdateExamRequest.class)
+                    )
+            ),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Exam updated"),
                     @ApiResponse(responseCode = "400", description = "Invalid request"),
                     @ApiResponse(responseCode = "404", description = "Exam not found")
             }
     )
-    ResponseEntity<ExamResponse> update(
-            @PathVariable UUID id,
-            UpdateExamRequest request
-    );
+    ResponseEntity<ExamResponse> update(UUID id, UpdateExamRequest request);
 
     @Operation(
             summary = "Delete an exam",
@@ -105,7 +110,5 @@ public interface IExamControllerSwagger {
                     @ApiResponse(responseCode = "404", description = "Exam not found")
             }
     )
-    ResponseEntity<Void> delete(
-            @PathVariable UUID id
-    );
+    ResponseEntity<Void> delete(UUID id);
 }

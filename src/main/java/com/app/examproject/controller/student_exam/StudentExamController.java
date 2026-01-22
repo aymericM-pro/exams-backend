@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/exam-sessions")
-public class StudentExamController {
+public class StudentExamController implements IStudentExamControllerSwagger {
 
     private final StudentExamService studentExamService;
     private final StudentAnswerService studentAnswerService;
