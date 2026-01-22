@@ -26,8 +26,8 @@ public class KeycloakAdminConfig {
     public Keycloak keycloakAdmin() {
         return KeycloakBuilder.builder()
                 .serverUrl(serverUrl)
-                .realm(adminRealm) // ⚠️ doit être "master"
-                .clientId(clientId) // ex: exam-admin
+                .realm(adminRealm)
+                .clientId(clientId)
                 .clientSecret(clientSecret)
                 .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
                 .build();

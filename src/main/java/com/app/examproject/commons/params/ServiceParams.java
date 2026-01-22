@@ -4,8 +4,7 @@ import com.app.examproject.commons.errors.BusinessException;
 import com.app.examproject.commons.errors.errors.ParamError;
 import org.apache.commons.lang3.StringUtils;
 
-public abstract class ServiceParams<T extends ServiceParams<T>>
-        implements IServiceParams<T> {
+public abstract class ServiceParams<T extends ServiceParams<T>> implements IServiceParams<T> {
 
     @Override
     @SuppressWarnings("unchecked")
@@ -30,12 +29,8 @@ public abstract class ServiceParams<T extends ServiceParams<T>>
         return value;
     }
 
-    protected Integer parseInt(
-            String value,
-            boolean nullable,
-            Integer min,
-            Integer max
-    ) {
+    protected Integer parseInt(String value, boolean nullable, Integer min, Integer max) {
+
         if (StringUtils.isBlank(value)) {
             if (nullable) {
                 return null;

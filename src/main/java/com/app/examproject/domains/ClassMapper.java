@@ -23,8 +23,6 @@ public interface ClassMapper {
     @Mapping(target = "professors", ignore = true)
     ClassEntity fromCreate(CreateClassRequest request);
 
-    // ===== Helpers =====
-
     default List<UUID> mapStudentIds(ClassEntity entity) {
         if (entity.getStudents() == null) return List.of();
         return entity.getStudents()

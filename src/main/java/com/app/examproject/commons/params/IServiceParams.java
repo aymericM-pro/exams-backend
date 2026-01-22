@@ -14,9 +14,7 @@ public interface IServiceParams <T extends IServiceParams<T>>
      * return the fully initialized and validated service parameters object.
      *
      * @return The formalized service parameters object.
-     *
      * @throws BusinessException If the parameters validation failed.
-     *
      * @see ServiceParams#validateAndSetup()
      */
     public T formalize() throws BusinessException;

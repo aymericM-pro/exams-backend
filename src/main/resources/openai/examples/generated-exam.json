@@ -1,0 +1,61 @@
+{
+  "title": "Java Fundamentals Exam",
+  "description": "Assessment covering core Java concepts including OOP and collections.",
+  "semester": "S2",
+  "questions": [
+    {
+      "title": "What is the main purpose of the JVM?",
+      "type": "MULTIPLE_CHOICE",
+      "position": 0,
+      "answers": [
+        {
+          "text": "To compile Java source code",
+          "correct": false,
+          "position": 0
+        },
+        {
+          "text": "To execute Java bytecode",
+          "correct": true,
+          "position": 1
+        },
+        {
+          "text": "To manage Maven dependencies",
+          "correct": false,
+          "position": 2
+        },
+        {
+          "text": "To format Java code",
+          "correct": false,
+          "position": 3
+        }
+      ]
+    },
+    {
+      "title": "Which keyword is used to inherit a class in Java?",
+      "type": "MULTIPLE_CHOICE",
+      "position": 1,
+      "answers": [
+        {
+          "text": "this",
+          "correct": false,
+          "position": 0
+        },
+        {
+          "text": "super",
+          "correct": false,
+          "position": 1
+        },
+        {
+          "text": "extends",
+          "correct": true,
+          "position": 2
+        },
+        {
+          "text": "implements",
+          "correct": false,
+          "position": 3
+        }
+      ]
+    }
+  ]
+}
