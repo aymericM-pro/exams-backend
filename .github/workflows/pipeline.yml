@@ -80,6 +80,9 @@ jobs:
           java-version: 21
           cache: maven
 
+      - name: Compile for SonarCloud
+        run: mvn -B clean compile
+
       - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
